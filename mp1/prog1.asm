@@ -1,4 +1,3 @@
-
 ;
 ; The code given to you here implements the histogram calculation that 
 ; we developed in class.  In programming studio, we will add code that
@@ -68,7 +67,7 @@ COUNTLOOP
 NON_ALPHA
 	LDR R6,R0,#0		; load the non-alpha count
 	ADD R6,R6,#1		; add one to it
-	STR R6,R0,#0		; store the new non-alpha count
+	STR R6                 ,R0,#0		; store the new non-alpha count
 	BRnzp GET_NEXT		; branch to end of conditional structure
 AT_LEAST_A
 	ADD R6,R2,R4		; compare with 'Z'
@@ -98,10 +97,28 @@ GET_NEXT
 
 
 PRINT_HIST
-ST R0,SAVER0 ; right now R0 contain pointer but we also need it for our outputs
-BRnzp DONE
-JSR LAB
-; you will need to insert your code to print the histogram here
+ST R0,SAVER0 ; right now R0 contain pointer but we also need it for our outputs 
+ST R2,SAVER2
+LD R6, NUM_BINS ;Sets R6 to 27
+
+
+
+PRINTLOOP 
+LD R0,SAVER0
+LD R2,SAVER2
+NOT R0,R0
+ADD R0,R0,#1 ;R0=-R0
+ADD R0,R0,R2 ;R0=Current location - start of histogram
+ADD R0, R0, #15
+ADD R0, R0, #15
+ADD R0, R0, #15
+ADD R0, R0, #15
+ADD R0, R0, #4 ;R0=current location -start of histogram +64
+OUT
+LD R0, SPACE ;
+OUT
+
+
 
 ;R1 digit counter
 ;R2 bit counter
@@ -109,14 +126,17 @@ JSR LAB
 ;R6 for math
 ;R0 is the digit
 
-LAB
-ST R0, SAVER0
-ST R1, SAVER1
+
 ST R2, SAVER2
-ST R3, SAVER3
-ST R4, SAVER4
-ST R5, SAVER5
-ST R7, SAVER7
+ST R6, SAVER6
+
+AND R3,R3,#0
+ADD R3,R3,R2
+LD R0, SAVER0 
+ADD R3,R3,R0
+LDR R3,R3,#0
+
+
 
 AND R1,R1, #0; Clear digit counter
 INITD
@@ -136,7 +156,7 @@ SHIFTR3
 ADD R3,R3,R3;
 ADD R2,R2,#1
 BRnzp INITDB
-PBITS ADD R5,R0, #-9
+PBITS ADD R6,R0, #-9
 BRp ADDA
 ADD R0,R0, #15
 ADD R0,R0, #15
@@ -151,17 +171,24 @@ ADD R0,R0,#10;ADD 'A'-10/55
 OUTTRAP TRAP x21
 ADD R1, R1, #1;
 BRnzp INITD
-DONER
-LD R0,SAVER0
-LD R1,SAVER1
-LD R2,SAVER2
-LD R3,SAVER3
-LD R4,SAVER4
-LD R5,SAVER5
-LD R7,SAVER7
-RET
-DONE	HALT			; done
 
+DONER LD R2,SAVER2
+ADD R2,R2,#1
+ST R2,SAVER2
+LD R6, SAVER6
+ADD R6,R6,#-1
+BRz DONE
+LD R0, NEWLINE ;
+OUT
+BRnp PRINTLOOP 
+
+
+
+
+
+
+
+DONE	HALT			; done
 
 ; the data needed by the program
 NUM_BINS	.FILL #27	; 27 loop iterations
@@ -169,19 +196,21 @@ NEG_AT		.FILL xFFC0	; the additive inverse of ASCII '@'
 AT_MIN_Z	.FILL xFFE6	; the difference between ASCII '@' and 'Z'
 AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
-STR_START	.FILL x4000	; string starting address
+;STR_START	.FILL x4000	; string starting address
+SPACE .FILL #32;
+NEWLINE .FILL x000A
 SAVER0 .BLKW 1
 SAVER1 .BLKW 1
 SAVER2 .BLKW 1
 SAVER3 .BLKW 1
 SAVER4 .BLKW 1
 SAVER5 .BLKW 1
+SAVER6 .BLKW 1
 SAVER7 .BLKW 1
-
 ; for testing, you can use the lines below to include the string in this
 ; program...
-; STR_START	.FILL STRING	; string starting address
-; STRING		.STRINGZ "This is a test of the counting frequency code.  AbCd...WxYz."
+ STR_START	.FILL STRING	; string starting address
+STRING		.STRINGZ "This is a test of the counting frequency code. AbCd...WxYz. "
 
 
 
