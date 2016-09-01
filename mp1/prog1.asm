@@ -1,3 +1,4 @@
+
 ;
 ; The code given to you here implements the histogram calculation that 
 ; we developed in class.  In programming studio, we will add code that
@@ -97,11 +98,68 @@ GET_NEXT
 
 
 PRINT_HIST
-
+ST R0,SAVER0 ; right now R0 contain pointer but we also need it for our outputs
+BRnzp DONE
+JSR LAB
 ; you will need to insert your code to print the histogram here
 
+;R1 digit counter
+;R2 bit counter
+;R3 is input
+;R6 for math
+;R0 is the digit
 
+LAB
+ST R0, SAVER0
+ST R1, SAVER1
+ST R2, SAVER2
+ST R3, SAVER3
+ST R4, SAVER4
+ST R5, SAVER5
+ST R7, SAVER7
 
+AND R1,R1, #0; Clear digit counter
+INITD
+ADD R6,R1,#-4
+BRzp DONER
+AND R0,R0, #0; Clear digit
+AND R2,R2, #0; Clear bit counter
+INITDB ADD R6,R2,#-4
+BRzp PBITS ; False
+ADD R0,R0,R0; shift digits left
+ADD R3,R3,#0; to get r3
+BRn ADD1dig ;
+BRnzp SHIFTR3 ;
+ADD1dig 
+ADD R0,R0,#1;
+SHIFTR3
+ADD R3,R3,R3;
+ADD R2,R2,#1
+BRnzp INITDB
+PBITS ADD R5,R0, #-9
+BRp ADDA
+ADD R0,R0, #15
+ADD R0,R0, #15
+ADD R0,R0, #15
+ADD R0,R0, #3; ADD '0'/48
+BRnzp OUTTRAP
+ADDA 
+ADD R0,R0,#15
+ADD R0,R0,#15
+ADD R0,R0,#15
+ADD R0,R0,#10;ADD 'A'-10/55
+OUTTRAP TRAP x21
+ADD R1, R1, #1;
+BRnzp INITD
+DONER
+LD R0,SAVER0
+LD R1,SAVER1
+LD R2,SAVER2
+LD R3,SAVER3
+LD R4,SAVER4
+LD R5,SAVER5
+LD R7,SAVER7
+RET
 DONE	HALT			; done
 
 
@@ -112,6 +170,13 @@ AT_MIN_Z	.FILL xFFE6	; the difference between ASCII '@' and 'Z'
 AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
 STR_START	.FILL x4000	; string starting address
+SAVER0 .BLKW 1
+SAVER1 .BLKW 1
+SAVER2 .BLKW 1
+SAVER3 .BLKW 1
+SAVER4 .BLKW 1
+SAVER5 .BLKW 1
+SAVER7 .BLKW 1
 
 ; for testing, you can use the lines below to include the string in this
 ; program...
