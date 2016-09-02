@@ -94,32 +94,60 @@ GET_NEXT
 	ADD R1,R1,#1		; point to next character in string
 	BRnzp COUNTLOOP		; go to start of counting loop
 
+;PRINT_HIST only occurs after we've gone through the entire string (aka reach the null character) and completed the histogram
+;In my lab, I created a program that would print a hexadecimal number stored in a register, and I decided to reuse it here.
+;In my lab I use registers 0-3 &6 so while I could've changed my registers I didn't want to mess around with so instead
+;since I am reusing R0,R2&R6 from the top part of the program, I make sure to store them into memory so that after I use
+;my code from the lab, I can load the original values of those registers
+;I use R6 as my loop counter, similarly to line 45 of this code
+;The first thing I print in every line is the character being counted, nonalphabetic (represented all by @) or a specific letter
+;To get this I figured that the current line I'm examining of the histogram - start of the histogram tells me if it's the 1st,2nd,
+;and so on line of the histogram, if it's the first I would print out @, 2nd A, and onward. luckily all these characters are next to each other
+;but @ has the ascii value of 64 so I need to add 64 to R0 before I get the right ascii Value to print out
+;Then I print out a space, whose ascii value I already saved into memory location SPACE, so I load into R0 then print out
+;I store R2 &R6 for later use. I clear R3 and turn it into the value stored at the line of the histogram being currently examined
+;(I do this by making r3<-m[R2+x3F00]), the next part is turning R3 into a character seen on the monitor.
 
+;These are the registers for printing a register value onto the screeen from the lab
+;R1 digit counter
+;R2 bit counter
+;R3 is input
+;R6 for math
+;R0 is the digit
+
+; I break up the 16 bit value stored into R3 conceptually as 4 digits containing 4 bits each
+;I set up a digit counter, if we print all 4 digits, then we go to DONER (done for the lab but not MP)
+;Otherwise, we clear the digit and the bit counter, if we have gotten 4 bits from R3 for the current digit we go to PBITS
+;otherwise we shift digit left. Then we check to see if R3<0 aka MSB=1, if it is we add 1 to digit, if not we skip that step
+;either ways we'll shift the input R3 to the left and increment the bit counter. Then we go back into the loop
+;until we get 4 bits from R3 at which point we'll go to PBITS aka we print out the corresponding ascii char for the digit
+;we do this by adding the ascii value of '0' if it's from 0-9 or the ascii value of'A' -10. After that we just print
+;and increment the digit counter and then go back into the loop until we've printed 4 digits. At which point we go to DONER
+;In Doner, we restore,increment,and once again store R2 in order to update the location of the histogram's line
+;Then we restore,and decrement R6, If R6=0 then we're done with the program
+;otherwise we print out a newline and go back into the printloop in order to get the next printed line 
 
 PRINT_HIST
-ST R0,SAVER0 ; right now R0 contain pointer but we also need it for our outputs 
-ST R2,SAVER2
-LD R6, NUM_BINS ;Sets R6 to 27
+	ST R0,SAVER0 ; right now R0 contain pointer but we also need it for our outputs 
+	ST R2,SAVER2
+	LD R6, NUM_BINS ;Sets R6 to 27
 
 
 
-PRINTLOOP 
-LD R0,SAVER0
-LD R2,SAVER2
-NOT R0,R0
-ADD R0,R0,#1 ;R0=-R0
-ADD R0,R0,R2 ;R0=Current location - start of histogram
-ADD R0, R0, #15
-ADD R0, R0, #15
-ADD R0, R0, #15
-ADD R0, R0, #15
-ADD R0, R0, #4 ;R0=current location -start of histogram +64
-OUT
-LD R0, SPACE ;
-OUT
-
-
-
+	PRINTLOOP 
+		LD R0,SAVER0
+		LD R2,SAVER2
+		NOT R0,R0
+		ADD R0,R0,#1 ;R0=-R0
+		ADD R0,R0,R2 ;R0=Current location - start of histogram
+		ADD R0, R0, #15
+		ADD R0, R0, #15
+		ADD R0, R0, #15
+		ADD R0, R0, #15
+		ADD R0, R0, #4 ;R0=current location -start of histogram +#64(ascii value of @)
+		OUT
+		LD R0, SPACE ;loads space char
+		OUT
 ;R1 digit counter
 ;R2 bit counter
 ;R3 is input
@@ -127,60 +155,57 @@ OUT
 ;R0 is the digit
 
 
-ST R2, SAVER2
-ST R6, SAVER6
+		ST R2, SAVER2 ;Stores R2 to load later
+		ST R6, SAVER6 ;stores R6 to load later
+		AND R3,R3,#0 ;Clears R3
+		ADD R3,R3,R2 ;R3<-R2
+		LD R0, SAVER0 ;Loads x3F00 into R0 which was previous the space char
+		ADD R3,R3,R0 ;R3<-R2+x3F00 aka location of line currently being examine
+		LDR R3,R3,#0 ;R3<-M[R3], the value stored at the line of histogram aka # of times written
+		AND R1,R1, #0; Clear digit counter
+		INITD
+			ADD R6,R1,#-4 ;checks to see if printed <4 digits
+			BRzp DONER ;if so done with printing the value stored in R3 but not with the program
+			AND R0,R0, #0; Clear digit
+			AND R2,R2, #0; Clear bit counter
+				INITDB ADD R6,R2,#-4 ;got <4 bit from R3?
+				BRzp PBITS ; False, when we've got 4 bits from R3
+				ADD R0,R0,R0; shift digits left
+				ADD R3,R3,#0; to get CC of r3
+				BRn ADD1dig ;if negative add1 to digit
+				BRnzp SHIFTR3 ;otherwise shift digits, don't need to add 0 to digit 
+				ADD1dig 
+					ADD R0,R0,#1; Add 1 to digit
+				SHIFTR3
+				ADD R3,R3,R3; Right shift R3
+				ADD R2,R2,#1 ;Increment bit counter
+				BRnzp INITDB ;go back to loop to see if printed <4 bits
+				PBITS ADD R6,R0, #-9 ;checks to see if digit <=9
+					BRp ADDA ;If digit more than 9, add 'A' -10
+					ADD R0,R0, #15 ;Digit is 9 or less so add ASCII '0' aka 48
+					ADD R0,R0, #15
+					ADD R0,R0, #15
+					ADD R0,R0, #3; ADD '0' aka 48
+					BRnzp OUTTRAP ;go print out digit
+					ADDA  ;Digit is 10 or more so add "A" -10 to digit
+						ADD R0,R0,#15
+						ADD R0,R0,#15
+						ADD R0,R0,#15
+						ADD R0,R0,#10;ADD ('A'-10) aka 55
+					OUTTRAP TRAP x21 ;OUT
+						ADD R1, R1, #1; Increment digit counter
+						BRnzp INITD ;go back to loop to see if printed 4 digits yet
 
-AND R3,R3,#0
-ADD R3,R3,R2
-LD R0, SAVER0 
-ADD R3,R3,R0
-LDR R3,R3,#0
-
-
-
-AND R1,R1, #0; Clear digit counter
-INITD
-ADD R6,R1,#-4
-BRzp DONER
-AND R0,R0, #0; Clear digit
-AND R2,R2, #0; Clear bit counter
-INITDB ADD R6,R2,#-4
-BRzp PBITS ; False
-ADD R0,R0,R0; shift digits left
-ADD R3,R3,#0; to get r3
-BRn ADD1dig ;
-BRnzp SHIFTR3 ;
-ADD1dig 
-ADD R0,R0,#1;
-SHIFTR3
-ADD R3,R3,R3;
-ADD R2,R2,#1
-BRnzp INITDB
-PBITS ADD R6,R0, #-9
-BRp ADDA
-ADD R0,R0, #15
-ADD R0,R0, #15
-ADD R0,R0, #15
-ADD R0,R0, #3; ADD '0'/48
-BRnzp OUTTRAP
-ADDA 
-ADD R0,R0,#15
-ADD R0,R0,#15
-ADD R0,R0,#15
-ADD R0,R0,#10;ADD 'A'-10/55
-OUTTRAP TRAP x21
-ADD R1, R1, #1;
-BRnzp INITD
-
-DONER LD R2,SAVER2
-ADD R2,R2,#1
-ST R2,SAVER2
-LD R6, SAVER6
-ADD R6,R6,#-1
-BRz DONE
-LD R0, NEWLINE ;
-OUT
-BRnp PRINTLOOP 
+DONER ;This was DONE in lab must still need to do some stuff before moving on to the next line
+	LD R2,SAVER2 ;Restore R2
+	ADD R2,R2,#1 ;Increment R2
+	ST R2,SAVER2 ;Store new value of R2
+	LD R6, SAVER6 ;Restore R6
+	ADD R6,R6,#-1 ;Decrement R6
+	BRz DONE ;IF r6=0 printed all 27 lines & actually are done
+	LD R0, NEWLINE ;otherwise print newline
+	OUT
+	BRnp PRINTLOOP ;go back to loop since you're not done
 
 
 
@@ -197,16 +222,12 @@ AT_MIN_Z	.FILL xFFE6	; the difference between ASCII '@' and 'Z'
 AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
 STR_START	.FILL x4000	; string starting address
-SPACE .FILL #32;
-NEWLINE .FILL x000A
-SAVER0 .BLKW 1
-SAVER1 .BLKW 1
+SPACE           .FILL #32 ;Space char
+NEWLINE         .FILL x000A ;newline char
+SAVER0 .BLKW 1 ;These store values of registers to be restored later
 SAVER2 .BLKW 1
-SAVER3 .BLKW 1
-SAVER4 .BLKW 1
-SAVER5 .BLKW 1
 SAVER6 .BLKW 1
-SAVER7 .BLKW 1
+
 ; for testing, you can use the lines below to include the string in this
 ; program...
 ; STR_START	.FILL STRING	; string starting address
