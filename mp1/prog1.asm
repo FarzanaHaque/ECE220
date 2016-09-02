@@ -122,8 +122,8 @@ GET_NEXT
 ;either ways we'll shift the input R3 to the left and increment the bit counter. Then we go back into the loop
 ;until we get 4 bits from R3 at which point we'll go to PBITS aka we print out the corresponding ascii char for the digit
 ;we do this by adding the ascii value of '0' if it's from 0-9 or the ascii value of'A' -10. After that we just print
-;and increment the digit counter and then go back into the loop until we've printed 4 digits. At which point we go to DONER
-;In Doner, we restore,increment,and once again store R2 in order to update the location of the histogram's line
+;and increment the digit counter and then go back into the loop until we've printed 4 digits. At which point we go to
+;Doner, we restore,increment,and once again store R2 in order to update the location of the histogram's line
 ;Then we restore,and decrement R6, If R6=0 then we're done with the program
 ;otherwise we print out a newline and go back into the printloop in order to get the next printed line 
 
@@ -201,10 +201,10 @@ DONER ;This was DONE in lab must still need to do some stuff before moving on to
 	ADD R2,R2,#1 ;Increment R2
 	ST R2,SAVER2 ;Store new value of R2
 	LD R6, SAVER6 ;Restore R6
-	ADD R6,R6,#-1 ;Decrement R6
-	BRz DONE ;IF r6=0 printed all 27 lines & actually are done
 	LD R0, NEWLINE ;otherwise print newline
 	OUT
+	ADD R6,R6,#-1 ;Decrement R6
+	BRz DONE ;IF r6=0 printed all 27 lines & actually are done
 	BRnp PRINTLOOP ;go back to loop since you're not done
 
 
