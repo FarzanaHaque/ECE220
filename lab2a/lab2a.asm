@@ -2,8 +2,30 @@
 ;read comments
 ;
 .ORIG x3000
-		
+
+GET_CHAR
+	AND R0, R0, #0 ;Clears R0
+	GETC
+	OUT
+	LD R1, SPACE ;Loads SPACE CHAR
+	NOT R1,R1
+	AND R1,R1,#1
+	ADD R1,R0, R1 ;R1=R0-Space char
+	BRz GET_CHAR ;R0= space so get next character
+	LD R1, NEW_LINE
+	NOT R1,R1
+	AND R1,R1,#1
+	ADD R1,R0, R1 ;R1=R0-New line
+	BRz DONE ;R0= NEW_LINE so DONE
+	LD R1,CHAR_RETURN ;Loads return character
+	NOT R1,R1
+	AND R1,R1,#1
+	ADD R1,R0, R1 ;R1=R0-Return_char
+	BRz DONE ;R0= return so done
+	JSR IS_BALANCED
+	BRnzp GET_CHAR ;RIGHT???	
 SPACE	.FILL x0020
+
 NEW_LINE	.FILL x000A
 CHAR_RETURN	.FILL x000D
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -11,7 +33,16 @@ CHAR_RETURN	.FILL x000D
 ;input - R0 holds the input
 ;output - R5 set to -1 if unbalanced. else not modified.
 IS_BALANCED
-	
+	ST R7,	IS_BALANCE_SaveR7
+
+
+
+
+	RET
+
+
+	 
+
 NEG_OPEN .FILL xFFD8
 ;IN:R0, OUT:R5 (0-success, 1-fail/overflow)
 ;R3: STACK_END R4: STACK_TOP
