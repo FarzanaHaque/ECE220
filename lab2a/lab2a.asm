@@ -16,12 +16,12 @@ GET_CHAR
 	NOT R1,R1
 	AND R1,R1,#1
 	ADD R1,R0, R1 ;R1=R0-New line
-	BRz DONE ;R0= NEW_LINE so DONE
+	BRz DONER ;R0= NEW_LINE so DONE
 	LD R1,CHAR_RETURN ;Loads return character
 	NOT R1,R1
 	AND R1,R1,#1
 	ADD R1,R0, R1 ;R1=R0-Return_char
-	BRz DONE ;R0= return so done
+	BRz DONER ;R0= return so done
 	JSR IS_BALANCED
 	BRnzp GET_CHAR ;RIGHT???	
 SPACE	.FILL x0020
@@ -34,6 +34,24 @@ CHAR_RETURN	.FILL x000D
 ;output - R5 set to -1 if unbalanced. else not modified.
 IS_BALANCED
 	ST R7,	IS_BALANCE_SaveR7
+	LD R1,NEG_OPEN
+	ADD R1,R1,R0;
+	BRz subPUSH
+	LD R1,NEG_CLOSE
+	ADD R1,R1,R0
+	BRz subPOP
+subPUSH
+	JSR PUSH
+	BRnzp GET_CHAR
+subPOP
+	JSR POP
+	LD R1,NEG_OPEN
+	ADD R1,R1,R0
+	BRz GET_CHAR
+	ADD R5,R5,#0
+	ADD R5,R5,#-1
+	DONE
+DONER
 
 
 
@@ -44,6 +62,7 @@ IS_BALANCED
 	 
 
 NEG_OPEN .FILL xFFD8
+NEG_CLOSE .FILL xFFD
 ;IN:R0, OUT:R5 (0-success, 1-fail/overflow)
 ;R3: STACK_END R4: STACK_TOP
 ;
