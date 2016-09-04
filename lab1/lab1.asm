@@ -7,18 +7,17 @@
 ;R1 digit counter
 ;R2 bit counter
 ;R3 is input
-;R4 is for math
-;R5 is also for math bc I'm redundant
+;R6 is for math
 ;R0 is the digit
 
  .ORIG x3000
 AND R1,R1, #0; Clear digit counter
 INITD
-ADD R4,R1,#-4
+ADD R6,R1,#-4
 BRzp DONE
 AND R0,R0, #0; Clear digit
 AND R2,R2, #0; Clear bit counter
-INITDB ADD R5,R2,#-4
+INITDB ADD R6,R2,#-4
 BRzp PBITS ; False
 ADD R0,R0,R0; shift digits left
 ADD R3,R3,#0; to get r3
@@ -30,7 +29,7 @@ SHIFTR3
 ADD R3,R3,R3;
 ADD R2,R2,#1
 BRnzp INITDB
-PBITS ADD R5,R0, #-9
+PBITS ADD R6,R0, #-9
 BRp ADDA
 ADD R0,R0, #15
 ADD R0,R0, #15
