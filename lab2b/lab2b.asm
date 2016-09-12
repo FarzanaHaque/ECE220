@@ -14,7 +14,7 @@ MAINLOOP
 POPLOOP
 	LD R6, ASCII_0
 	JSR POP
-	ADD R5,R5,0
+	ADD R5,R5,#0
 	BRp DONE ;when r5 is pos aka underflow
 	ADD R0,R0,R6 ;so now it's the right ascii value
 	OUT
@@ -38,7 +38,9 @@ ASCII_0 .FILL x30
 DIV	
 ;the idea is subtracting r4 from r3 (add 1 each time) til # less than r4, then store the incremented into r0 and new r3 into r1 
 	AND R0,R0,#0 ;clear quotient
+	
 	ADD R1,r3,#0 ;set remainder to thing initially
+;ADD R1,R1,R3 ;not sure why but if don't work....
 	NOT R4,R4
 	ADD R4,R4,#1 ;set r4 to -r4
 
@@ -46,7 +48,8 @@ DIVLOOP
 	
 	ADD R0,R0,#1
 	ADD R1,R1,R4 ;current remainder-divisor	
-	BRzp divloop 
+	BRzp DIVLOOP 
+	ADD R0,R0,#-1 ;otherwise quotient 1 too much
 	NOT R4,R4
 	ADD R4,R4,#1 ;restores R4 to original
 	ADD R1,R1,R4 ;lol i think it's because it's off otherwise/neg
