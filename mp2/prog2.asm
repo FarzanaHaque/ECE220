@@ -145,7 +145,42 @@ ADD R5,R5,#0
 BRp loadresult
 BR invalid
 loadresult ADD R5,R0,#0
-JSR PRINT_HEX
+LD R0, xchar
+OUT ;prints out xchar
+;RET ;removessssssssssssssssssssssssssss
+AND R1,R1, #0; Clear digit counter
+		INITD
+			ADD R6,R1,#-4 ;checks to see if printed <4 digits
+			BRzp DONE ;if so done with printing the value stored in R5 & the program
+			AND R0,R0, #0; Clear digit
+			AND R2,R2, #0; Clear bit counter
+				INITDB ADD R6,R2,#-4 ;got <4 bit from R5?
+				BRzp PBITS ; False, when we've got 4 bits from R5
+				ADD R0,R0,R0; shift digits left
+				ADD R5,R5,#0; to get CC of r5
+				BRn ADD1dig ;if negative add1 to digit
+				BRnzp SHIFTR5 ;otherwise shift digits, don't need to add 0 to digit 
+				ADD1dig 
+					ADD R0,R0,#1; Add 1 to digit
+				SHIFTR5
+				ADD R5,R5,R5; Right shift R5
+				ADD R2,R2,#1 ;Increment bit counter
+				BRnzp INITDB ;go back to loop to see if printed <4 bits
+				PBITS ADD R6,R0, #-9 ;checks to see if digit <=9
+					BRp ADDA ;If digit more than 9, add 'A' -10
+					ADD R0,R0, #15 ;Digit is 9 or less so add ASCII '0' aka 48
+					ADD R0,R0, #15
+					ADD R0,R0, #15
+					ADD R0,R0, #3; ADD '0' aka 48
+					BRnzp OUTTRAP ;go print out digit
+					ADDA  ;Digit is 10 or more so add "A" -10 to digit
+						ADD R0,R0,#15
+						ADD R0,R0,#15
+						ADD R0,R0,#15
+						ADD R0,R0,#10;ADD ('A'-10) aka 55
+					OUTTRAP TRAP x21 ;OUT
+						ADD R1, R1, #1; Increment digit counter
+						BRnzp INITD ;go back to loop to see if printed 4 digits yet
 DONE HALT
 
 zero .FILL x0030
@@ -177,45 +212,10 @@ invalidexp .STRINGZ "Invalid Expression"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;R3- value to print in hexadecimal
-PRINT_HEX
-LD R0, xchar
-OUT ;prints out xchar
-;RET ;removessssssssssssssssssssssssssss
-AND R1,R1, #0; Clear digit counter
-		INITD
-			ADD R6,R1,#-4 ;checks to see if printed <4 digits
-			BRzp DONER ;if so done with printing the value stored in R5 but not with the program
-			AND R0,R0, #0; Clear digit
-			AND R2,R2, #0; Clear bit counter
-				INITDB ADD R6,R2,#-4 ;got <4 bit from R5?
-				BRzp PBITS ; False, when we've got 4 bits from R5
-				ADD R0,R0,R0; shift digits left
-				ADD R5,R5,#0; to get CC of r5
-				BRn ADD1dig ;if negative add1 to digit
-				BRnzp SHIFTR5 ;otherwise shift digits, don't need to add 0 to digit 
-				ADD1dig 
-					ADD R0,R0,#1; Add 1 to digit
-				SHIFTR5
-				ADD R5,R5,R5; Right shift R5
-				ADD R2,R2,#1 ;Increment bit counter
-				BRnzp INITDB ;go back to loop to see if printed <4 bits
-				PBITS ADD R6,R0, #-9 ;checks to see if digit <=9
-					BRp ADDA ;If digit more than 9, add 'A' -10
-					ADD R0,R0, #15 ;Digit is 9 or less so add ASCII '0' aka 48
-					ADD R0,R0, #15
-					ADD R0,R0, #15
-					ADD R0,R0, #3; ADD '0' aka 48
-					BRnzp OUTTRAP ;go print out digit
-					ADDA  ;Digit is 10 or more so add "A" -10 to digit
-						ADD R0,R0,#15
-						ADD R0,R0,#15
-						ADD R0,R0,#15
-						ADD R0,R0,#10;ADD ('A'-10) aka 55
-					OUTTRAP TRAP x21 ;OUT
-						ADD R1, R1, #1; Increment digit counter
-						BRnzp INITD ;go back to loop to see if printed 4 digits yet
+;PRINT_HEX
 
-DONER RET ;T
+
+;DONER RET ;T
 xchar .FILL x0078
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;R0 - character input from keyboard
