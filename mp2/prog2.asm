@@ -277,7 +277,8 @@ DIVLOOP
 	BRnzp divdone		
 neg
 	NOT R3,R3
-	ADD R3,R3, #1 ;R3=-r3 bc we already know how to divide w/ pos # and we can NOT &+1 to get the neg inverse later
+	ADD R3,R3, #1 ;R3=-r3 bc we already know how to divide w/ pos # and we can negate it to get the neg inverse later
+	ADD R1,R3,#0 ;R1=-R3 so that our division works the same as for positive
 negloop	ADD R0,R0,#1
 	ADD R1,R1,R4 ;current remainder-divisor	
 	BRzp negloop 
@@ -290,13 +291,38 @@ negloop	ADD R0,R0,#1
 	BRnzp divdone		;for this problem we assume R4 always + bc can't input negative divisor in calc
 divdone RET	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;input R3, R4
+;input R3=base of exponent, R4=exponent,r6=0 except when negative base and odd exponent bc then you're output is negative
 ;out R0
 EXP
 ;your code goes here
+AND R6,R6,#0 ;clears
 AND R0,R0,#0 ;clears r0
 ADD R3,R3,#0
 Brz stopexp ;if R3=0 then you want to keep the 0 in r0 
+Brp posexp
+NOT R3,R3
+ADD R3,R3,#1 ;R3=-R3 , only occurs when R3 starts neg
+ST R4, expr4 ;going to change the value r4 temporarily, but then come back
+ADD R4,R4,R4 ;right shift 15x if pos or zero, then R4 was even, if neg R4 was odd
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift
+Brzp posexp ;if R3= neg # &exp=even then -R3^R4 = R3^R4 so go to positive loop
+ADD R6,R6,#-1 ;
+
+posexp 
+LD R4,expr4 ;restores value of r4
 ADD R0,R0,#1 ;sets r0 to 1
 ADD R4,R4,#0 ;checks CC of R3
 checkexp BRz stopexp
@@ -313,9 +339,14 @@ stopmult2 ADD R0,R1,#0
 LD R3,expr3
 ADD R4,R4,#-1
 BRp checkexp ;doesn't work if r4 is negative but that's okay	
+ADD R6,R6,#0
+Brz stopexp
+NOT R0,R0
+ADD R0,R0,#1
+
 stopexp RET
 expr3 .BLKW #1	
-
+expr4 .BLKW #1
 
 ;IN:R0, OUT:R5 (0-success, 1-fail/overflow)
 ;R3: STACK_END R4: STACK_TOP
