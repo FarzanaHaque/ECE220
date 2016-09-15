@@ -259,13 +259,12 @@ stopmult RET
 DIV	
 ;your code goes here	
 ;the idea is subtracting r4 from r3 (add 1 each time) til # less than r4, then store the incremented into r0 and new r3 into r1 
-	AND R0,R0,#0 ;clear quotient
-	
-	ADD R1,r3,#0 ;set remainder to thing initially
-;ADD R1,R1,R3 ;not sure why but if don't work....
+	AND R0,R0,#0 ;clear quotient	
+	ADD R1,R3,#0 ;set remainder to dividend initially
 	NOT R4,R4
 	ADD R4,R4,#1 ;set r4 to -r4
-
+	ADD R3,R3,#0 ;testing to see if r3 is neg
+	BRn neg ;if neg neg loop
 DIVLOOP
 	
 	ADD R0,R0,#1
@@ -275,8 +274,21 @@ DIVLOOP
 	NOT R4,R4
 	ADD R4,R4,#1 ;restores R4 to original
 	ADD R1,R1,R4 ;lol i think it's because it's off otherwise/neg
-		
-RET	
+	BRnzp divdone		
+neg
+	NOT R3,R3
+	ADD R3,R3, #1 ;R3=-r3 bc we already know how to divide w/ pos # and we can NOT &+1 to get the neg inverse later
+negloop	ADD R0,R0,#1
+	ADD R1,R1,R4 ;current remainder-divisor	
+	BRzp negloop 
+	ADD R0,R0,#-1 ;otherwise quotient 1 too much
+	NOT R4,R4
+	ADD R4,R4,#1 ;restores R4 to original
+	ADD R1,R1,R4 ;lol i think it's because it's off otherwise/neg
+	NOT R0,R0 ;R0 right now equals -R3/R4, want to negate
+	ADD R0,R0,#1	;now r0 is correct
+	BRnzp divdone		;for this problem we assume R4 always + bc can't input negative divisor in calc
+divdone RET	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
