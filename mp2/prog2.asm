@@ -3,28 +3,37 @@
 ;
 ;
 .ORIG x3000
-	
+;We first read the input,then output it, if it's new line we check to see if the stack has exactly one value
+;if it has one value we load result in R5, I used PRINT_HEX from lab1 to display the numerical value of r5 as ascii chars
+;at the point we'd stop, if it's not exactly one value in the stck we print "Invalid Expression"
+;if the char wasn't newline we check to see if it's a space, if it's a space we get the next char
+;if it's neither a space or newline, we check to see if it's a valid char (0-9 and the operators (+,-,*,^,/))
+;if it's not a valid char we print "Invalid expression" and halt the program
+;if the char is valid we check to see if it's (0-9), we subtract the ascii value of '0' to get the numerical value of the ascii char
+;then we push that numerical value into the stack then get the next char
+;if the valid char is an operator we pop a value store it into R4, pop another value into R3, if there's underflow after either popping then print
+;invalid expression and halt, otherwise we apply the operand and push the result into the stack
+;The program will keep on taking inputs until given either a newline or an invalid input (either an undefined char like 'A' or something like '3+' 	
 ;your code goes here
 	
 GETCHAR GETC
-OUT ;getrid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-AND R2,R2,#0 ;using R2 later on to store which operand 
-LD R1,NEW_LINE
+OUT 
+LD R1,NEW_LINE ;R1 is the a temp registor used to check input values
 NOT R1,R1
 ADD R1,R1,#1
 ADD R1,R1,R0 ;R1=value-newline
-BRz NEWLINE
+BRz NEWLINE ;checks if input=newline
 LD R1,CHAR_RETURN
 NOT R1,R1
 ADD R1,R1,#1
 ADD R1,R1,R0 ;R1=value-return
-BRz NEWLINE ;(when value= either newline)
+BRz NEWLINE ;(when input= either newline)
 LD R1,SPACE
 NOT R1,R1
 ADD R1,R1,#1
-ADD R1,R1,R0 ;R1=value-space ;if R1 is important might need to change reg
-BRz GETCHAR
-;check if it's 0-9
+ADD R1,R1,R0 ;R1=input-space ;
+BRz GETCHAR ;if space go back in loop to get next char
+;next part check if input is an operand ( '0'-'9')
 LD R1,zero
 NOT R1,R1
 ADD R1,R1,#1
@@ -48,6 +57,7 @@ ADD R1,R1,#-1
 BRz num ;eight
 ADD R1,R1,#-1
 BRz num ;nine
+;next part checks if input is operator
 LD R1,MULsign
 NOT R1,R1
 ADD R1,R1,#1
@@ -73,54 +83,59 @@ NOT R1,R1
 ADD R1,R1,#1
 ADD R1,R1,R0
 BRz operator
+
+;if none of these it's an invalid char print invalid string
 invalid LEA R0, invalidexp
 PUTS
 BRnzp DONE
+
+;if operand we go to the following label
 num LD R1, zero ;loads ascii value '0'
 NOT R1,R1
 ADD R1,R1,#1
-ADD R0,R0,R1 ;R0<-char-'0' aka numerical value of char
-JSR PUSH
+ADD R0,R0,R1 ;R0<-input-'0' aka numerical value of input
+JSR PUSH ;pushes numerical value of input into stack
+BRnzp GETCHAR ;get next char
 
-BRnzp GETCHAR
+;if operator we go to the following label
 operator
-ST R0, SAVEOP
-JSR POP
+ST R0, SAVEOP ;store operand char
+JSR POP ;top of stack is now in r0
 ADD R4,R0,#0 ;the newest operand is in r4
-JSR POP
+JSR POP ;top of stack in now in r0
 ADD R3,R0,#0 ;the older operand is in r3
-LD R0, SAVEOP
-ADD R5,R5,#-1
-BRz invalid
+LD R0, SAVEOP ;restore r0 to have operand char
+ADD R5,R5,#-1 ;if R5=1 that means there was an underflow and thus move to invalid
+BRz invalid ;moves to invalid
 
-;this part checks which operator and then BRz to that place
-LD R1,MULsign
+;this part checks which operator and then BRz to label for corresponding operator
+LD R1,MULsign ;loads *
 NOT R1,R1
 ADD R1,R1,#1
-ADD R1,R1,R0
-BRz mu
-LD R1,PLUSsign
+ADD R1,R1,R0 ;R1=R0-'*'
+BRz mu ;goes there if input was *
+LD R1,PLUSsign ;loads '+'
 NOT R1,R1
 ADD R1,R1,#1
-ADD R1,R1,R0
+ADD R1,R1,R0 ;r1=R0-'*'
 BRz pl
 LD R1,MINsign
 NOT R1,R1
 ADD R1,R1,#1
-ADD R1,R1,R0
+ADD R1,R1,R0 ;r1=input-'-'
 BRz mi
 LD R1,DIVsign
 NOT R1,R1
 ADD R1,R1,#1
-ADD R1,R1,R0
+ADD R1,R1,R0 ;r1=input-'/'
 BRz di
 LD R1,EXPsign
 NOT R1,R1
 ADD R1,R1,#1
-ADD R1,R1,R0
+ADD R1,R1,R0 ;r1=input -'^'
 BRz ex
 
-;the places being called, jsr operator then push & go back to char
+;the labels being called from Brz, jsr operator then push the result & go back to getchar
 mu JSR MUL
 JSR PUSH
 BRnzp GETCHAR
@@ -137,17 +152,18 @@ ex JSR EXP
 JSR PUSH
 BRnzp GETCHAR
 
+;what happens when input=newline
 NEWLINE JSR POP
 ADD R5,R5,#0
-BRp invalid
+BRp invalid ;if R5=1 then there was underflow, otherwise it'll equal 0
 JSR POP
-ADD R5,R5,#0
-BRp loadresult
-BR invalid
-loadresult ADD R5,R0,#0
-LD R0, xchar
-OUT ;prints out xchar
-;RET ;removessssssssssssssssssssssssssss
+ADD R5,R5,#0 ;if exactly 1 value before popping, then r5 should now =1 bc underflow
+BRp loadresult ;only occurs if exactly 1, then go to load result to screen
+BR invalid ;if stack had 2 or more values when newline was entered, then that's invalid
+loadresult ADD R5,R0,#0 ;Moves result in R0 (the last thing popped aka the final result) to R5
+
+;'Print_Hex' which i chose to put directly in the code not as a subroutine
+;Turns numerical value in R5 into output on the screen
 AND R1,R1, #0; Clear digit counter
 		INITD
 			ADD R6,R1,#-4 ;checks to see if printed <4 digits
