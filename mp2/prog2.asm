@@ -297,12 +297,12 @@ EXP
 ;your code goes here
 AND R6,R6,#0 ;clears
 AND R0,R0,#0 ;clears r0
+ST R4, expr4 ;going to change the value r4 temporarily if r3 is negative, but then restore back
 ADD R3,R3,#0
 Brz stopexp ;if R3=0 then you want to keep the 0 in r0 
 Brp posexp
 NOT R3,R3
 ADD R3,R3,#1 ;R3=-R3 , only occurs when R3 starts neg
-ST R4, expr4 ;going to change the value r4 temporarily, but then come back
 ADD R4,R4,R4 ;right shift 15x if pos or zero, then R4 was even, if neg R4 was odd
 ADD R4,R4,R4 ;right shift
 ADD R4,R4,R4 ;right shift
@@ -324,8 +324,8 @@ ADD R6,R6,#-1 ;
 posexp 
 LD R4,expr4 ;restores value of r4
 ADD R0,R0,#1 ;sets r0 to 1
-ADD R4,R4,#0 ;checks CC of R3
-checkexp BRz stopexp
+checkexp ADD R4,R4,#0 ;checks CC of R4
+ BRz stopexp
 ST R3,expr3
 
 
