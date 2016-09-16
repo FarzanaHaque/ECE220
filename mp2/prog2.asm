@@ -225,24 +225,13 @@ invalidexp .STRINGZ "Invalid Expression"
 
 
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;R3- value to print in hexadecimal
-;PRINT_HEX
-
-
-;DONER RET ;T
-xchar .FILL x0078
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;R0 - character input from keyboard
-;R6 - current numerical output
-;
-;
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
-;out R0
+;out R0 =R3+R4
 PLUS	
 ;your code goes here
 ADD R0,R3,R4
@@ -252,21 +241,21 @@ RET
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
-;out R0
+;out R0=R3-R4
 MIN	
 NOT R4,R4
-ADD R4,R4,#1
+ADD R4,R4,#1 ;R4=-R4
 ADD R0,R3,R4
 RET	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
-;out R0
+;out R0=R3*R4
 MUL	
 AND R0,R0,#0 ;clears r0
 checkmul ADD R3,R3,#0 ;checks if R3=0
-BRz stopmult 
+BRz stopmult ;stops when R3=0
 ADD R0,R0,R4
-ADD R3,R3,#-1
+ADD R3,R3,#-1 ;decrements R3
 BRnzp checkmul
 stopmult RET	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -333,18 +322,19 @@ ADD R4,R4,R4 ;right shift
 ADD R4,R4,R4 ;right shift
 ADD R4,R4,R4 ;right shift
 ADD R4,R4,R4 ;right shift
-ADD R4,R4,R4 ;right shift
+ADD R4,R4,R4 ;right shift 
 Brzp posexp ;if R3= neg # &exp=even then -R3^R4 = R3^R4 so go to positive loop
-ADD R6,R6,#-1 ;
+ADD R6,R6,#-1 ;if R3 is negativve & R4 is odd only
 
 posexp 
 LD R4,expr4 ;restores value of r4
 ADD R0,R0,#1 ;sets r0 to 1
 checkexp ADD R4,R4,#0 ;checks CC of R4
  BRz stopexp
-ST R3,expr3
+ST R3,expr3 ;loads R3 to later restore R3
 
 
+;reimplement mult
 AND R1,R1,#0 ;clears r1, will store current value of r0*r3
 checkmul2 ADD R3,R3,#0 ;checks if R3=0
 BRz stopmult2 
@@ -361,8 +351,8 @@ NOT R0,R0
 ADD R0,R0,#1
 
 stopexp RET
-expr3 .BLKW #1	
-expr4 .BLKW #1
+expr3 .BLKW #1	;stores r3
+expr4 .BLKW #1 ;stores r4
 
 ;IN:R0, OUT:R5 (0-success, 1-fail/overflow)
 ;R3: STACK_END R4: STACK_TOP
