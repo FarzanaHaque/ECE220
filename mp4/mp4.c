@@ -34,7 +34,7 @@ double fx_ddval(double a, double b, double c, double d, double e, double x)
 {
     //Change this to return the value of the double derivative of the polynomial at the value x
 	//12ax^2+6bx+2c
-	return 12*a*x*x+6*b*x+2*c    ;
+	return 12*a*x*x+6*b*x+2*c;
 	return 0;
 }
 
@@ -124,8 +124,8 @@ int main(int argc, char **argv)
     //You have to find the bound on the number of roots using rootbound function.
     //If it is > 0 try to find the roots using newrfind function.
     //You may use the fval, fdval and fddval funtions accordingly in implementing the halleys's method.
- if(rootbound(a,b,c,d,e,r,l)>=0) //means upper bound of roots in interval is zero or negative aka there are no roots
-	printf("The polynomial has no roots in the given interval");
+ if(rootbound(a,b,c,d,e,r,l)<=0) //means upper bound of roots in interval is zero or negative aka there are no roots
+	printf("The polynomial has no roots in the given interval\n");
  else 
 {
 	double x=l; //starting value of x
