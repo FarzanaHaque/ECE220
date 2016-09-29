@@ -125,7 +125,7 @@ int main(int argc, char **argv)
  else 
 {
 	double x=l;
-	while(x<r)
+	while(x<=r)
 {
 	newrfind_halley(a,b,c,d,e,x);
 	x=x+0.5;
