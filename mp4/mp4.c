@@ -43,12 +43,12 @@ int i=0; //checks how many iterations of halley we've done
 int roots=1; //automatically set to one if we do 1000 iteration and no roots then we set roots? to 0
     double xold=x;
 	double xnew=xold-(2*fx_val(a,b,c,d,e,xold)*fx_dval(a,b,c,d,e,xold))/(2*pow(abs_double(fx_dval(a,b,c,d,e,xold)),2)-fx_val(a,b,c,d,e,xold)*fx_ddval(a,b,c,d,e,xold));
-while((((xnew-xold)>0.000001)&&(i<1000)))
+while((((abs_double(xnew-xold))>0.000001)&&(i<10000)))
 {
 xold=xnew;
 xnew=xold-(2*fx_val(a,b,c,d,e,xold)*fx_dval(a,b,c,d,e,xold))/(2*pow(abs_double(fx_dval(a,b,c,d,e,xold)),2)-fx_val(a,b,c,d,e,xold)*fx_ddval(a,b,c,d,e,xold));
 i=i+1;//increment i
-if (i>1000)
+if (i>=10000)
 {
 	printf("No roots found.\n");
 	roots=0;
