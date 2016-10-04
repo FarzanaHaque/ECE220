@@ -1,0 +1,14 @@
+// Symbol table
+// Scope level 0:
+//	Symbol Name       Page Address
+//	----------------  ------------
+//	ECEGRADE          3004
+//	div2              3005
+//	div3              300A
+//	div5              300F
+//	REPEAT2           3016
+//	REPEAT3           3018
+//	REPEAT5           301A
+//	DONE              301C
+//	DIV               301D
+//	DIVLOOP           3021

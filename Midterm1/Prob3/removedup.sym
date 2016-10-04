@@ -1,0 +1,13 @@
+// Symbol table
+// Scope level 0:
+//	Symbol Name       Page Address
+//	----------------  ------------
+//	main              3004
+//	skip              300D
+//	DONE              300F
+//	PULL              3010
+//	loop              3011
+//	end               3016
+//	SEQ_START         3019
+//	saver1            301A
+

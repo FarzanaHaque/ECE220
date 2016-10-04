@@ -1,0 +1,12 @@
+// Symbol table
+// Scope level 0:
+//	Symbol Name       Page Address
+//	----------------  ------------
+//	loop              3009
+//	inccurrent        3010
+//	complength        3011
+//	nextchar          3016
+//	DONE              301F
+//	ast               3020
+//	stringInput       3021
+

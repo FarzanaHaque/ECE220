@@ -1,0 +1,14 @@
+Record your answers here for Problem 4.
+Please limit each answer to no more than 3 sentences.
+
+
+1.In LC-3, what is the benefit of using a subroutine? (5 points)
+
+A subroutine makes code easier to read and shortens the code, by writing a function used multiple times only once. It also helps with debugging because if there's a problem with the function you only need to debug that section.
+
+
+
+2.Explain what is a stack underflow. (5 points)
+Stack underflow occurs when you try to pop from an empty stack. 
+
+
