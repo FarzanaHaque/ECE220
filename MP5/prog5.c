@@ -50,26 +50,33 @@ set_seed (const char seed_str[])
 {
 //    Example of how to use sscanf to read a single integer and check for anything other than the integer
 //    "int seed" will contain the number typed by the user (if any) and the string "post" will contain anything after the integer
-//    The user should enter only an integer, and nothing else, so we will check that only "seed" is read. 
+//    The user should enter only an integer, and nothing else, so we will check that only "seed" is read.
 //    We declare
-      int seed;
-      char post[2]; //makes a changeable string of 1 char and 1 null
-//    The sscanf statement below reads the integer into seed. 
-    int numitems= sscanf (seed_str, "%d%1s", &seed, post);
+//    int seed;
+//    char post[2];
+//    The sscanf statement below reads the integer into seed.
+//    sscanf (seed_str, "%d%1s", &seed, post)
 //    If there is no integer, seed will not be set. If something else is read after the integer, it will go into "post".
 //    The return value of sscanf indicates the number of items read succesfully.
-//    When the user has typed in only an integer, only 1 item should be read sucessfully. 
-//    Check that the return value is 1 to ensure the user enters only an integer. 
-//    Feel free to uncomment these statements, modify them, or delete these comments as necessary. 
+//    When the user has typed in only an integer, only 1 item should be read sucessfully.
+//    Check that the return value is 1 to ensure the user enters only an integer.
+//    Feel free to uncomment these statements, modify them, or delete these comments as necessary.
 //    You may need to change the return statement below
-   if(numitems==1) //post is null aka it's a valid input
- { srand(seed);
-	return 1;
-	}
-else{
-	printf("set_seed: invalid seed\n");
-    return 0;
-}
+    
+    int seed;
+    char post[2];
+    int check;
+    check = sscanf(seed_str, "%d%1s" , &seed, post);
+
+    if( check != 1 ) //if check is anything other than 1, then something other than integer was read or nothing..., so print message, and return 0
+    {
+        printf("set_seed: invalid seed\n");    
+        return check;
+    }
+    
+    //check = 1: only an integer was read, use srand and return 1        
+    srand(seed);
+    return check; //should be 1
 }
 
 
@@ -77,7 +84,7 @@ else{
  * start_game -- This function is called by main.c after set_seed but before the user makes guesses.
  *               This function creates the four solution numbers using the approach
  *               described in the wiki specification (using rand())
- *               The four solution numbers should be stored in the static variables defined above. 
+ *               The four solution numbers should be stored in the static variables defined above.
  *               The values at the pointers should also be set to the solution numbers.
  *               The guess_number should be initialized to 1 (to indicate the first guess)
  * INPUTS: none
@@ -91,8 +98,10 @@ else{
 void
 start_game (int* one, int* two, int* three, int* four)
 {
-
-*one = rand() % 8;
+    //your code here
+    
+    //Step 1 & 2 of algorithm given
+    *one = rand() % 8;
     *two = rand() % 8;
     *three = rand() % 8;
     *four = rand() % 8;
@@ -140,18 +149,96 @@ make_guess (const char guess_str[], int* one, int* two,
 //  The statement, given char post[2]; and four integers w,x,y,z,
 char post[2];
 int w,x,y,z;
+
+//int paired=0; //is 1 if same, 0 otherwise
  int numitems2= sscanf (guess_str, "%d%d%d%d%1s", &w, &x, &y, &z, post);
 //  will read four integers from guess_str into the integers and read anything else present into post
 //  The return value of sscanf indicates the number of items sucessfully read from the string.
 //  You should check that exactly four integers were sucessfully read.
 if( w>=0 && w<=7 && x>=0 && x<=7 && y>=0 && y<=7 && z>=0 && z<=7 && numitems2==4)
 {
+int pair1=0;
+int pair2=0;
+int pair3=0;
+int pair4=0;
+int matched=0;
+int misplaced=0;
+	if(w==solution1){
+	matched++;
+	pair1=1;
+}
+	if(x==solution2){
+	matched++;
+	pair2=1;
+}
+if(y==solution3){
+	matched++;
+	pair3=1;
+}
+if(z==solution4){
+	matched++;
+	pair4=1;
+}
+if(!pair1)
+{
+	if(!pair2 &&w==solution2)
+{
+	misplaced++;
+	pair2=1;
+}
+	if(!pair3 &&w==solution3)
+{
+	misplaced++;
+	pair3=1;
+}
+	if(!pair4 &&w==solution4)
+{
+	misplaced++;
+	pair4=1;
+}
+	
 
+}
+if(!pair2)
+{
+
+	if(!pair3 &&x==solution3)
+{
+	misplaced++;
+	pair3=1;
+}
+	if(!pair4 &&x==solution4)
+{
+	misplaced++;
+	pair4=1;
+}
+	
+
+}
+if(!pair3)
+{
+
+
+	if(!pair4 &&y==solution4)
+{
+	misplaced++;
+	pair4=1;
+}
+	
+
+}
+printf("With guess %d, you got %d perfect matches and %d misplaced matches.\n",guess_number,matched,misplaced);
+guess_number++;
+}
+else
+{	
+	printf("make_guess: invalid guess \n");
+	return 0;
 }
 //  You should then check if the 4 integers are between 0-7. If so, it is a valid guess
 //  Otherwise, it is invalid.  
 //  Feel free to use this sscanf statement, delete these comments, and modify the return statement as needed
-    return 1;
+return 0;
 }
 
 
