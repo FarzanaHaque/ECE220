@@ -201,6 +201,11 @@ if(!pair1)
 }
 if(!pair2)
 {
+	if(!pair1 &&x==solution1)
+{
+	misplaced++;
+	pair1=1;
+}
 
 	if(!pair3 &&x==solution3)
 {
@@ -217,7 +222,16 @@ if(!pair2)
 }
 if(!pair3)
 {
-
+	if(!pair1 &&y==solution1)
+{
+	misplaced++;
+	pair4=1;
+}
+	if(!pair4 &&y==solution4)
+{
+	misplaced++;
+	pair4=1;
+}
 
 	if(!pair4 &&y==solution4)
 {
@@ -229,6 +243,7 @@ if(!pair3)
 }
 printf("With guess %d, you got %d perfect matches and %d misplaced matches.\n",guess_number,matched,misplaced);
 guess_number++;
+return 1;
 }
 else
 {	
@@ -238,7 +253,6 @@ else
 //  You should then check if the 4 integers are between 0-7. If so, it is a valid guess
 //  Otherwise, it is invalid.  
 //  Feel free to use this sscanf statement, delete these comments, and modify the return statement as needed
-return 0;
 }
 
 
