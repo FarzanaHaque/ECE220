@@ -52,18 +52,24 @@ set_seed (const char seed_str[])
 //    "int seed" will contain the number typed by the user (if any) and the string "post" will contain anything after the integer
 //    The user should enter only an integer, and nothing else, so we will check that only "seed" is read. 
 //    We declare
-//    int seed;
-//    char post[2];
+      int seed;
+      char post[2]; //makes a changeable string of 1 char and 1 null
 //    The sscanf statement below reads the integer into seed. 
-//    sscanf (seed_str, "%d%1s", &seed, post)
+    int numitems= sscanf (seed_str, "%d%1s", &seed, post);
 //    If there is no integer, seed will not be set. If something else is read after the integer, it will go into "post".
 //    The return value of sscanf indicates the number of items read succesfully.
 //    When the user has typed in only an integer, only 1 item should be read sucessfully. 
 //    Check that the return value is 1 to ensure the user enters only an integer. 
 //    Feel free to uncomment these statements, modify them, or delete these comments as necessary. 
 //    You may need to change the return statement below
-   
+   if(numitems==1) //post is null aka it's a valid input
+ { srand(seed);
+	return 1;
+	}
+else{
+	printf("set_seed: invalid seed\n");
     return 0;
+}
 }
 
 
@@ -85,7 +91,20 @@ set_seed (const char seed_str[])
 void
 start_game (int* one, int* two, int* three, int* four)
 {
-    //your code here
+
+*one = rand() % 8;
+    *two = rand() % 8;
+    *three = rand() % 8;
+    *four = rand() % 8;
+    
+    //Step 3: set static variable guess_number to 1
+    guess_number = 1;
+
+    //make copy in static variables
+    solution1 = *one;
+    solution2 = *two;
+    solution3 = *three;
+    solution4 = *four;
     
 }
 
@@ -119,10 +138,16 @@ make_guess (const char guess_str[], int* one, int* two,
 //  One thing you will need to read four integers from the string guess_str, using a process
 //  similar to set_seed
 //  The statement, given char post[2]; and four integers w,x,y,z,
-//  sscanf (guess_str, "%d%d%d%d%1s", &w, &x, &y, &z, post)
+char post[2];
+int w,x,y,z;
+ int numitems2= sscanf (guess_str, "%d%d%d%d%1s", &w, &x, &y, &z, post);
 //  will read four integers from guess_str into the integers and read anything else present into post
 //  The return value of sscanf indicates the number of items sucessfully read from the string.
 //  You should check that exactly four integers were sucessfully read.
+if( w>=0 && w<=7 && x>=0 && x<=7 && y>=0 && y<=7 && z>=0 && z<=7 && numitems2==4)
+{
+
+}
 //  You should then check if the 4 integers are between 0-7. If so, it is a valid guess
 //  Otherwise, it is invalid.  
 //  Feel free to use this sscanf statement, delete these comments, and modify the return statement as needed
