@@ -62,7 +62,7 @@ set_seed (const char seed_str[])
 //    Check that the return value is 1 to ensure the user enters only an integer.
 //    Feel free to uncomment these statements, modify them, or delete these comments as necessary.
 //    You may need to change the return statement below
-    
+    /*
     int seed;
     char post[2];
     int check;
@@ -73,10 +73,24 @@ set_seed (const char seed_str[])
         printf("set_seed: invalid seed\n");    
         return check;
     }
-    
+    else{
     //check = 1: only an integer was read, use srand and return 1        
     srand(seed);
     return check; //should be 1
+}
+*/
+   int seed;
+      char post[2]; //makes a changeable string of 1 char and 1 null
+  int numitems= sscanf (seed_str, "%d%1s", &seed, post);
+  if(numitems==1) //post is null aka it's a valid input
+ { srand(seed);
+    return 1;
+    }
+else{
+    printf("set_seed: invalid seed\n");
+    return 0;
+}
+
 }
 
 
@@ -290,7 +304,7 @@ return 1;
 }
 else
 {	
-	printf("make_guess: invalid guesses. \n");
+	printf("make_guess: invalid guess\n");
 	return 0;
 }
 //  You should then check if the 4 integers are between 0-7. If so, it is a valid guess
