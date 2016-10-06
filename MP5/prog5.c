@@ -284,11 +284,13 @@ if(!pairz)
 }
 printf("With guess %d, you got %d perfect matches and %d misplaced matches.\n",guess_number,matched,misplaced);
 guess_number++;
+if(matched==4)
+printf(	"You guessed correctly in %d guesses\n",guess_number);
 return 1;
 }
 else
 {	
-	printf("make_guess: invalid guess \n");
+	printf("make_guess: invalid guesses. \n");
 	return 0;
 }
 //  You should then check if the 4 integers are between 0-7. If so, it is a valid guess
