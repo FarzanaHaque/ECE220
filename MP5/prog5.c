@@ -161,82 +161,123 @@ int pair1=0;
 int pair2=0;
 int pair3=0;
 int pair4=0;
+int pairw=0;
+int pairx=0;
+int pairy=0;
+int pairz=0;
 int matched=0;
 int misplaced=0;
 	if(w==solution1){
-	matched++;
+	++matched;
 	pair1=1;
+	pairw=1;
 }
 	if(x==solution2){
-	matched++;
+	++matched;
 	pair2=1;
+	pairx=1;
 }
 if(y==solution3){
-	matched++;
+	++matched;
 	pair3=1;
+	pairy=1;
 }
 if(z==solution4){
-	matched++;
+	++matched;
 	pair4=1;
+	pairz=1;
 }
-if(!pair1)
+if(!pairw)
 {
 	if(!pair2 &&w==solution2)
 {
-	misplaced++;
+	++misplaced;
 	pair2=1;
+	pairw=1;
 }
-	if(!pair3 &&w==solution3)
+	if(!pair3 &&w==solution3 && !pairw)
 {
-	misplaced++;
+	++misplaced;
 	pair3=1;
+	pairw=1;
 }
-	if(!pair4 &&w==solution4)
+	if(!pair4 &&w==solution4 && !pairw)
 {
-	misplaced++;
+	++misplaced;
 	pair4=1;
+	pairw=1;
 }
 	
 
 }
-if(!pair2)
+if(!pairx)
 {
 	if(!pair1 &&x==solution1)
 {
-	misplaced++;
+	++misplaced;
 	pair1=1;
+	pairx=1;
 }
 
-	if(!pair3 &&x==solution3)
+	if(!pair3 &&x==solution3 && !pairx)
 {
-	misplaced++;
+	++misplaced;
 	pair3=1;
+	pairx=1;
 }
-	if(!pair4 &&x==solution4)
+	if(!pair4 &&x==solution4 && !pairx)
 {
-	misplaced++;
+	++misplaced;
 	pair4=1;
+	pairx=1;	
 }
 	
 
 }
-if(!pair3)
+if(!pairy)
 {
 	if(!pair1 &&y==solution1)
 {
-	misplaced++;
-	pair4=1;
+	++misplaced;
+	pair1=1;
+	pairy=1;
 }
-	if(!pair4 &&y==solution4)
+	if(!pair2 &&y==solution2 && !pairy)
 {
-	misplaced++;
-	pair4=1;
+	++misplaced;
+	pair2=1;
+	pairy=1;
 }
 
-	if(!pair4 &&y==solution4)
+	if(!pair4 &&y==solution4 && !pairy)
+{
+	++misplaced;
+	pair4=1;
+	pairy=1;
+}
+	
+
+}
+if(!pairz)
+{
+	if(!pair1 &&z==solution1)
 {
 	misplaced++;
-	pair4=1;
+	pair1=1;
+	pairz=1;
+}
+	if(!pair2 &&z==solution2 && !pairz)
+{
+	misplaced++;
+	pair2=1;
+	pairz=1;
+}
+
+	if(!pair3 &&z==solution3 && !pairz)
+{
+	misplaced++;
+	pair3=1;
+	pairz=1;
 }
 	
 
