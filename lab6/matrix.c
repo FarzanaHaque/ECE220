@@ -8,6 +8,19 @@
  */
 void matrix_multiply(double *matrixA,double *matrixB,double *matrixC,int m,int k,int n)
 {
-//YOUR CODE HERE
-}
 
+
+//YOUR CODE HERE
+for (int i=0;i<m;i++)
+{
+	for(int j=0;j<n;j++)
+	{
+		double sum=0;
+		for(int l=0;l<k;l++)
+		{
+			sum=sum+((matrixA[i*k+l])*(matrixB[l*n+j]));
+		}
+	matrixC[i*n+j]=sum;
+	}
+}
+}

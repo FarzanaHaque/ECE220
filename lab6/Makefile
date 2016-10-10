@@ -3,8 +3,8 @@ CFLAGS= -Wall -Werror -std=c99
 
 all: matMult
 
-matMult: main.o matrix.o verify.o
-	$(CC) main.o matrix.o verify.o -o matMult
+matMult: main.o matrix.o 
+	$(CC) main.o matrix.o -o matMult
 
 main.o: main.c 
 	$(CC) $(CFLAGS) -c -g main.c
