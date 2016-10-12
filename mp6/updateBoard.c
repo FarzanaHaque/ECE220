@@ -50,7 +50,7 @@ for ((m=(row-1));(m<=(row+1));m++)
 	{
 		if((m>=0) && (m<boardRowSize) && (n>=0) && (n<boardColSize) && !(m==row && n==col))
 		{ //printf("%d,%d",m,n);
-			if(board[m*boardColSize+n]==1)
+			if(board[m*boardColSize+n]==2 || board[m*boardColSize+n]==1)
 				neighbor++;
 		}
 	}
@@ -59,27 +59,41 @@ for ((m=(row-1));(m<=(row+1));m++)
 return neighbor;
 }
 void updateBoard(int* board, int boardRowSize, int boardColSize) {
-int change=1;
-int cln;
-int i=0;
-int j=0;
+//if it's an alive cell going to DEAD it's going to change to 2 in first iteration
+//if it's a dead cell going to ALIVE it's going to change to 3 in the first iteration
+//we do this to preserve the original state
+int i,j;
 for(i=0;i<boardRowSize;i++)
 {
 	for(j=0;j<boardColSize;j++)
 {
-	if(board[i*boardColSize+j]=0)
+	if(board[i*boardColSize+j]==0)
 	{
-		if(countLiveNeighbor(board,boardRowSize, boardColSize, i,j)==3)
-		change=0;
+		if((countLiveNeighbor(board,boardRowSize, boardColSize, i,j))==3)
+		board[i*boardColSize+j]=3;
 	}
-else {
-cln=countLiveNeighbor(board,boardRowSize, boardColSize, i,j);
-if(cln<2 || cln>3)
-change=0;
+if(board[i*boardColSize+j]==1)
+{
+int cln=countLiveNeighbor(board,boardRowSize, boardColSize, i,j);
+if((cln<2) || (cln>3))
+board[i*boardColSize+j]=2;
 }
 }
 }
-return change;
+//finished first iteration
+for(i=0;i<boardRowSize;i++)
+{
+	for(j=0;j<boardColSize;j++)
+{
+	if(board[i*boardColSize+j]==2)
+	board[i*boardColSize+j]=0;
+	if(board[i*boardColSize+j]==3)
+	board[i*boardColSize+j]=1;
+}
+}
+
+
+
 }
 
 
@@ -95,6 +109,28 @@ return change;
  * return 0 if the alive cells change for the next step.
  */ 
 int aliveStable(int* board, int boardRowSize, int boardColSize){
+int change=1;
+int cln;
+int i=0;
+int j=0;
+for(i=0;i<boardRowSize;i++)
+{
+	for(j=0;j<boardColSize;j++)
+{
+	if(board[i*boardColSize+j]==0)
+	{
+		if((countLiveNeighbor(board,boardRowSize, boardColSize, i,j))==3)
+		change=0;
+	}
+if(board[i*boardColSize+j]==1)
+{
+cln=countLiveNeighbor(board,boardRowSize, boardColSize, i,j);
+if((cln<2) || (cln>3))
+change=0;
+}
+}
+}
+return change;
 }
 
 				
