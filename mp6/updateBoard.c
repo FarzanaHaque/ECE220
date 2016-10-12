@@ -11,9 +11,27 @@
  * return the number of alive neighbors. There are at most eight neighbors.
  * Pay attention for the edge and corner cells, they have less neighbors.
  */
-
+#include <stdio.h>
+int sboard[18*35] ={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 int countLiveNeighbor(int* board, int boardRowSize, int boardColSize, int row, int col){
-}
+
 /*
  * Update the game board to the next step.
  * Input: 
@@ -21,10 +39,49 @@ int countLiveNeighbor(int* board, int boardRowSize, int boardColSize, int row, i
  * 0 represents a dead cell
  * boardRowSize: the number of rows on the game board.
  * boardColSize: the number of cols on the game board.
- * Output: board is updated with new values for next step.
+ * Output: number of alive neighbors
  */
-void updateBoard(int* board, int boardRowSize, int boardColSize) {
+int neighbor=0;
+int m=0;
+int n=0;
+for ((m=(row-1));(m<=(row+1));m++)
+{
+	for((n=(col-1));(n<=(col+1));n++)
+	{
+		if((m>=0) && (m<boardRowSize) && (n>=0) && (n<boardColSize) && !(m==row && n==col))
+		{ //printf("%d,%d",m,n);
+			if(board[m*boardColSize+n]==1)
+				neighbor++;
+		}
+	}
+
 }
+return neighbor;
+}
+void updateBoard(int* board, int boardRowSize, int boardColSize) {
+int change=1;
+int cln;
+int i=0;
+int j=0;
+for(i=0;i<boardRowSize;i++)
+{
+	for(j=0;j<boardColSize;j++)
+{
+	if(board[i*boardColSize+j]=0)
+	{
+		if(countLiveNeighbor(board,boardRowSize, boardColSize, i,j)==3)
+		change=0;
+	}
+else {
+cln=countLiveNeighbor(board,boardRowSize, boardColSize, i,j);
+if(cln<2 || cln>3)
+change=0;
+}
+}
+}
+return change;
+}
+
 
 /*
  * aliveStable
