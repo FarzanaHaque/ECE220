@@ -39,16 +39,15 @@ int main(int argc,char **argv)
   print_matrix(mat_C,m,n);
 
   //Check if solution is correct
-/*
   if(verify_matrix(mat_A,mat_B,mat_C, m, k, n))
   {
     printf("\nCorrect!\n");
   }
   else
   {
-    fprintf(stderr,"\nIncorrect.\n");
+    printf("\nIncorrect.\n");
   }
-*/
+
   //Free allocated memory
   free(mat_A);
   free(mat_B);
