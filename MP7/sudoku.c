@@ -35,8 +35,12 @@ int is_val_in_row(const int val, const int i, const int sudoku[9][9]) {
 
   assert(i>=0 && i<9);
 
+for (int n=0;n<9;n++)
+{
+	if(sudoku[i][n]==val)
+	return 1;
+}
   // BEG TODO
-  
   return 0;
   // END TODO
 }
@@ -48,7 +52,13 @@ int is_val_in_col(const int val, const int j, const int sudoku[9][9]) {
   assert(j>=0 && j<9);
 
   // BEG TODO
-  
+
+for (int n=0;n<9;n++)
+{
+	if(sudoku[n][j]==val)
+	return 1;
+}  
+
   return 0;
   // END TODO
 }
@@ -60,7 +70,18 @@ int is_val_in_3x3_zone(const int val, const int i, const int j, const int sudoku
   assert(i>=0 && i<9);
   
   // BEG TODO
-  
+
+  int isq=(i/3) *3;
+int jsq=(j/3) *3;
+int a; //for row
+int b; // for col counter
+for(a=0;a<3;a++){
+	for(b=0;b<3;b++)
+	{
+	if(sudoku[isq+a][jsq+b]==val)
+	return 1;
+	}
+}
   return 0;
   // END TODO
 }
@@ -79,6 +100,36 @@ int is_val_valid(const int val, const int i, const int j, const int sudoku[9][9]
 int solve_sudoku(int sudoku[9][9]) {
 
   // BEG TODO.
+int i,j;
+int fill=1; //assumed it's filled
+for (i=0;((i<9) && (fill==1));i++){
+
+	for(j=0;((j<9) && (fill==1));j++){	
+	if (sudoku[i][j]==0){
+	fill=0;
+	break;
+	}	
+
+}	
+}
+i=i-1; //bc i always is 1 too much
+if(fill==1){
+return 1;
+}
+else
+{
+//i & j is unfillled value
+}
+
+for (int num=1;num<=9;num++){
+	if (is_val_valid(num,i,j,sudoku)){
+	sudoku[i][j]=num;
+	if(solve_sudoku(sudoku)){
+	return 1;
+	}
+sudoku[i][j]=0;
+}
+}
 
   return 0;
   // END TODO.
