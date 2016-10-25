@@ -14,6 +14,15 @@ game * make_game(int rows, int cols)
     mygame->cells = malloc(rows*cols*sizeof(cell));
 
     //YOUR CODE STARTS HERE:  Initialize all other variables in game struct
+mygame->rows=rows;
+mygame->cols=cols;
+mygame->score=0;
+for(int i=0;i<rows*cols;i++){
+/*mygame[i].rows=i/cols;
+mygame[i].cols=i%cols;
+mygame[i].score=0;*/
+mygame->cells[i]=-1;
+}
 
 
     return mygame;
@@ -32,7 +41,16 @@ void remake_game(game ** _cur_game_ptr,int new_rows,int new_cols)
 	(*_cur_game_ptr)->cells = malloc(new_rows*new_cols*sizeof(cell));
 
 	 //YOUR CODE STARTS HERE:  Re-initialize all other variables in game struct
-
+/*_cur_game_ptr->rows=new_cols;
+_cur_game_ptr->cols=new_cols;
+_cur_game_ptr->score=0;
+*/
+for(int i=0;i<new_rows*new_cols;i++){
+_cur_game_ptr[i]->rows=new_cols;
+_cur_game_ptr[i]->cols=new_cols;
+_cur_game_ptr[i]->score=0;
+_cur_game_ptr[i]->cells[i]=-1;
+}
 	return;	
 }
 
@@ -54,10 +72,32 @@ cell * get_cell(game * cur_game, int row, int col)
 */
 {
     //YOUR CODE STARTS HERE
-
+if ((row<=cur_game->rows) && (col<=cur_game->cols))
+{
+return (cur_game->cells)+(row*(cur_game->cols)+col);
+}
     return NULL;
 }
+void slide_up(int* my_array, int rows, int cols){
+int i,j,target_row=0;
+for (j=0;j<cols;j++){
+	//target_row=0; //have to make zero again
+	for(i=1;i<rows;i++){//have to start with i=1 bc otherwise won't every have targetrow<i
+		if(my_array[i*cols+j]!=-1){
+			for(target_row=0;(target_row<i)&&(my_array[target_row*cols+j]!=-1);target_row++){
+			}
+			if(target_row<i){
+				my_array[target_row*cols+j]=my_array[i*cols+j];
+				my_array[i*cols+j]=-1;
+			}
+		
+			
+		}
+	}
+}
+    return;
 
+}
 int move_w(game * cur_game)
 /*!Slides all of the tiles in cur_game upwards. If a tile matches with the 
    one above it, the tiles are merged by adding their values together. When
@@ -67,7 +107,30 @@ int move_w(game * cur_game)
 */
 {
     //YOUR CODE STARTS HERE
-
+//bool flag=0;
+//slide_up(cur_game, cur_game->rows,cur_game->cols);
+int i,j,target_row,lcr=0;
+for (j=0;j<(cur_game->cols);j++){
+	lcr=0; //have to make zero again
+	for(i=1;i<cur_game->rows;i++){//have to start with i=1 bc otherwise won't every have targetrow<i
+		if(*get_cell(cur_game,i,j)!=-1){
+			for(target_row=0;(target_row<i)&&(*get_cell(cur_game,target_row,j)!=-1);target_row++){
+			}
+			if(target_row<i){
+				*get_cell(cur_game,target_row,j)=*get_cell(cur_game,i,j);
+				*get_cell(cur_game,i,j)=-1;
+			}
+			if(target_row!=lcr){
+				if(*get_cell(cur_game,target_row,j)==(*get_cell(cur_game,target_row-1,j))){
+				cur_game->cells[(target_row-1)*(cur_game->cols)+j]= (*get_cell(cur_game,target_row,j)+(*get_cell(cur_game,target_row,j)));
+				cur_game->cells[target_row*(cur_game->cols)+j]=-1;
+				lcr=target_row-1;
+				}
+			}
+			
+		}
+	}
+}
     return 1;
 };
 
