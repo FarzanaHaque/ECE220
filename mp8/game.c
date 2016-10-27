@@ -103,13 +103,21 @@ for (j=0;j<(cur_game->cols);j++){
 				*get_cell(cur_game,target_row,j)=*get_cell(cur_game,i,j);
 				*get_cell(cur_game,i,j)=-1;
 				flag=1;
+				printf("Moved!,target_row= %d,i=%d,j=%d",target_row,i,j);
 			}
 			if((target_row)!=lcr){
 				if(*get_cell(cur_game,target_row,j)==(*get_cell(cur_game,target_row-1,j))){
 				//cur_game->cells[(target_row-1)*(cur_game->cols)+j]= 2*(*get_cell(cur_game,target_row,j));
 				//cur_game->cells[target_row*(cur_game->cols)+j]=-1;
+				int cellgame=(*get_cell(cur_game,target_row,j));
+				int cellgame1=(*get_cell(cur_game,target_row-1,j));
+				printf("targetrow-1(%d)=%d,targetrow(%d)=%d",target_row-1,cellgame1,target_row,cellgame);
+			//printf("combo,*get_cell(cur_game,target_row-1,j)=%d (*get_cell(cur_game,target_row,j))=%d",*get_cell(cur_game,target_row-1,j),(*get_cell(cur_game,target_row,j)));
 				*get_cell(cur_game,target_row-1,j)=2*(*get_cell(cur_game,target_row,j));
 				*get_cell(cur_game,target_row,j)=-1;
+				cellgame=(*get_cell(cur_game,target_row,j));
+				cellgame1=(*get_cell(cur_game,target_row-1,j));
+				printf("above(%d)NEW=%d,targetrowNEW=%d",target_row-1,cellgame1,cellgame);
 				lcr=target_row-1;
 				cur_game->score+=(*get_cell(cur_game,target_row-1,j));
 				}
