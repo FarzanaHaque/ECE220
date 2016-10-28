@@ -1,5 +1,23 @@
 #include "game.h"
+/*
+for make_game i create a game with rows & cols specified by the user, set score to 0 and all the cells to -1
+for remake game, i do the same thing but with a different game
+for get_cell, if the user input a valid row & col within the rows and cols of the current game, i return the cell, otherwise i return null
+for move w, i go thru each column, set lcr (last combined row) to =0, go through each of the m elements within the column, check if the current value is empty
+if not i find target_row through a for loop, target_row is the first row that is empty and is less than current row number
+if target row is less than current row #, i move current row value into target row and clear row
+if the  row above != lcr we know tile hasn't already been merged so then we check to see if targetrow and above target row are same values
+we merge with the above row being the sum and the target row value being -1
+now we update lcr to row above target row
 
+move_a is exactly the same but we switch cols & rows, eg we do outter for loop each of the m rows, we check the col to the left of target col is not equal to lcc etc
+move_s (down) & move_d (right) are very similar but now i decided to start from the bottom right corner
+and we initalize lcc=((cur_game->cols)) instead of -1, because it's also out of the legal limits of the board aka col=-1 isn't on the board & neither is col=(cur_game->cols)
+
+legal_move_check goes through the game board and if there's any empty cells it'll return 1 because you still have legal moves left
+otherwise if the board is filled, you need to check to see if any of the moves(s,a,d,w) are valid, if they're valid, calling them returns a 1, so you make moves= the or of all 4 moves
+and return moves 
+*/
 
 game * make_game(int rows, int cols)
 /*! Create an instance of a game structure with the given number of rows
@@ -18,13 +36,8 @@ mygame->rows=rows;
 mygame->cols=cols;
 mygame->score=0;
 for(int i=0;i<rows*cols;i++){
-/*mygame[i].rows=i/cols;
-mygame[i].cols=i%cols;
-mygame[i].score=0;*/
-mygame->cells[i]=-1;
+mygame->cells[i]=-1; //set every cell to empty
 }
-
-
     return mygame;
 }
 
@@ -41,15 +54,11 @@ void remake_game(game ** _cur_game_ptr,int new_rows,int new_cols)
 	(*_cur_game_ptr)->cells = malloc(new_rows*new_cols*sizeof(cell));
 
 	 //YOUR CODE STARTS HERE:  Re-initialize all other variables in game struct
-/*_cur_game_ptr->rows=new_cols;
-_cur_game_ptr->cols=new_cols;
-_cur_game_ptr->score=0;
-*/
+
 (*_cur_game_ptr)->rows=new_rows;
 (*_cur_game_ptr)->cols=new_cols;
 (*_cur_game_ptr)->score=0;
 for(int i=0;i<new_rows*new_cols;i++){
-
 (*_cur_game_ptr)->cells[i]=-1;
 }
 	return;	
@@ -73,7 +82,7 @@ cell * get_cell(game * cur_game, int row, int col)
 */
 {
     //YOUR CODE STARTS HERE
-if ((row<cur_game->rows) && (col<cur_game->cols))
+if ((row<cur_game->rows) && (col<cur_game->cols) &&row>=0 && col >=0)
 {
 return (cur_game->cells)+(row*(cur_game->cols)+col);
 }
@@ -89,54 +98,44 @@ int move_w(game * cur_game)
 */
 {
     //YOUR CODE STARTS HERE
-//bool flag=0;
-//slide_up(cur_game, cur_game->rows,cur_game->cols);
 int i,j,target_row,lcr,flag=0;
-
+//flag set to 1 if valid move
 for (j=0;j<(cur_game->cols);j++){
-	lcr=0; //have to make zero again
-	for(i=1;i<cur_game->rows;i++){//have to start with i=1 bc otherwise won't every have targetrow<i
-		if(*get_cell(cur_game,i,j)!=-1){
+	lcr=-1; //have to make initialize, decided -1 whenever starting new column 
+	for(i=0;i<cur_game->rows;i++){
+		if(*get_cell(cur_game,i,j)!=-1){//current row value not empty
 			for(target_row=0;(target_row<i)&&(*get_cell(cur_game,target_row,j)!=-1);target_row++){
-			}
-			if(target_row<i){
-				*get_cell(cur_game,target_row,j)=*get_cell(cur_game,i,j);
-				*get_cell(cur_game,i,j)=-1;
-				flag=1;
-				printf("Moved!,target_row= %d,i=%d,j=%d",target_row,i,j);
-			}
-			if((target_row)!=lcr){
-				if(*get_cell(cur_game,target_row,j)==(*get_cell(cur_game,target_row-1,j))){
-				//cur_game->cells[(target_row-1)*(cur_game->cols)+j]= 2*(*get_cell(cur_game,target_row,j));
-				//cur_game->cells[target_row*(cur_game->cols)+j]=-1;
-				int cellgame=(*get_cell(cur_game,target_row,j));
-				int cellgame1=(*get_cell(cur_game,target_row-1,j));
-				printf("targetrow-1(%d)=%d,targetrow(%d)=%d",target_row-1,cellgame1,target_row,cellgame);
-			//printf("combo,*get_cell(cur_game,target_row-1,j)=%d (*get_cell(cur_game,target_row,j))=%d",*get_cell(cur_game,target_row-1,j),(*get_cell(cur_game,target_row,j)));
-				*get_cell(cur_game,target_row-1,j)=2*(*get_cell(cur_game,target_row,j));
-				*get_cell(cur_game,target_row,j)=-1;
-				cellgame=(*get_cell(cur_game,target_row,j));
-				cellgame1=(*get_cell(cur_game,target_row-1,j));
-				printf("above(%d)NEW=%d,targetrowNEW=%d",target_row-1,cellgame1,cellgame);
-				lcr=target_row-1;
-				cur_game->score+=(*get_cell(cur_game,target_row-1,j));
-				}
-			}
+			}//find first available target row
 			
-		}
+			if(target_row<i){//target row less than i
+				*get_cell(cur_game,target_row,j)=*get_cell(cur_game,i,j);//copy current row value into target row
+				*get_cell(cur_game,i,j)=-1; //clear target row value
+				flag=1; //so we'll return 1 bc successful slide
+			}
+			if((target_row-1)!=lcr){//row above target row not equal to lcr 
+				if(*get_cell(cur_game,target_row,j)==(*get_cell(cur_game,target_row-1,j))){//value above & below target row same
+				*get_cell(cur_game,target_row-1,j)=2*(*get_cell(cur_game,target_row,j));//row above= sum
+				*get_cell(cur_game,target_row,j)=-1;//clear target row
+				lcr=target_row-1; //lcr assigned to row above
+				cur_game->score+=(*get_cell(cur_game,target_row-1,j)); //increment score
+				flag=1;
+				}
+			
+			}
+
+		} 
 	}
-}
+} 
     return flag;
 
 };
 
-int move_a(game * cur_game) //slide right!!!!
+int move_a(game * cur_game) //slide left
 {
-    //YOUR CODE STARTS HERE
 int i,j,target_col,lcc,flag=0;
 for (i=0;i<(cur_game->rows);i++){
-	lcc=0; //have to make zero again
-	for(j=0;j<cur_game->cols;j++){//have to start with i=1 bc otherwise won't every have targetrow<i
+	lcc=-1; //have to make initialize, decided -1 whenever starting new row
+	for(j=0;j<cur_game->cols;j++){
 		if(*get_cell(cur_game,i,j)!=-1){
 			for(target_col=0;(target_col<j)&&(*get_cell(cur_game,i,target_col)!=-1);target_col++){
 			}
@@ -145,14 +144,13 @@ for (i=0;i<(cur_game->rows);i++){
 				*get_cell(cur_game,i,j)=-1;
 				flag=1;
 			}
-			if((target_col)!=lcc){
+			if((target_col-1)!=lcc){
 				if(*get_cell(cur_game,i,target_col)==(*get_cell(cur_game,i,target_col-1))){
-				//cur_game->cells[i*(cur_game->cols)+target_col-1]= (*get_cell(cur_game,i,target_col)+(*get_cell(cur_game,i,target_col)));
-				//cur_game->cells[i*(cur_game->cols)+target_col]=-1;
 				*get_cell(cur_game,i,target_col-1)=2*(*get_cell(cur_game,i,target_col));
 				*get_cell(cur_game,i,target_col)=-1;	
 				lcc=target_col-1;
 				cur_game->score+=(*get_cell(cur_game,i,target_col-1));
+				flag=1;
 				}
 			}
 			
@@ -162,12 +160,12 @@ for (i=0;i<(cur_game->rows);i++){
     return flag;
 };
 
-int move_d(game * cur_game){ //slide to the left
-    //YOUR CODE STARTS HERE
+int move_d(game * cur_game){ //slide to the right
 int i,j,target_col,lcc,flag=0;
+//starting from bottom right corner to top left corner
 for (i=(cur_game->rows)-1;i>=0;i--){
-	lcc=((cur_game->cols)-1); //have to initialize to last column 
-	for(j=(cur_game->cols)-2;j>=0;j--){
+	lcc=((cur_game->cols)); //value when starting new column
+	for(j=(cur_game->cols)-1;j>=0;j--){
 		if(*get_cell(cur_game,i,j)!=-1){
 			for(target_col=(cur_game->cols)-1;(target_col>j)&&(*get_cell(cur_game,i,target_col)!=-1);target_col--){
 			}
@@ -176,14 +174,13 @@ for (i=(cur_game->rows)-1;i>=0;i--){
 				*get_cell(cur_game,i,j)=-1;
 				flag=1;
 			}
-			if((target_col)!=lcc){
+			if((target_col+1)!=lcc){
 				if(*get_cell(cur_game,i,target_col)==(*get_cell(cur_game,i,target_col+1))){
 				cur_game->cells[i*(cur_game->cols)+target_col+1]= (*get_cell(cur_game,i,target_col)+(*get_cell(cur_game,i,target_col)));
 				cur_game->cells[i*(cur_game->cols)+target_col]=-1;
-				//*get_cell(cur_game,i,target_col+1)=2*(*get_cell(cur_game,i,target_col));
-				//*get_cell(cur_game,i,target_col)=-1;				
 				lcc=target_col+1;
 				cur_game->score+=(*get_cell(cur_game,i,target_col+1));
+				flag=1;
 				}
 			}
 			
@@ -194,11 +191,11 @@ for (i=(cur_game->rows)-1;i>=0;i--){
 };
 int move_s(game * cur_game) //slide down
 {
-    //YOUR CODE STARTS HERE
+   //starting from bottom right corner to top left corner
 int i,j,target_row,lcr,flag=0;
 for (j=(cur_game->cols)-1;j>=0;j--){
-	lcr=((cur_game->rows)-1); //have to initialize to value of last row
-	for(i=((cur_game->rows)-2);i>=0;i--){//have to start with i=1 bc otherwise won't every have targetrow<i
+	lcr=((cur_game->rows)); //have to initialize to value of last row
+	for(i=((cur_game->rows)-1);i>=0;i--){//have to start with i=1 bc otherwise won't every have targetrow<i
 		if(*get_cell(cur_game,i,j)!=-1){
 			for(target_row=(cur_game->rows)-1;(target_row>i)&&(*get_cell(cur_game,target_row,j)!=-1);target_row--){
 			}
@@ -207,14 +204,13 @@ for (j=(cur_game->cols)-1;j>=0;j--){
 				*get_cell(cur_game,i,j)=-1;
 				flag=1;
 			}
-			if((target_row)!=lcr){
+			if((target_row+1)!=lcr){
 				if(*get_cell(cur_game,target_row,j)==(*get_cell(cur_game,target_row+1,j))){
-				//cur_game->cells[(target_row+1)*(cur_game->cols)+j]= (*get_cell(cur_game,target_row,j)+(*get_cell(cur_game,target_row,j)));
-				//cur_game->cells[target_row*(cur_game->cols)+j]=-1;
 				*get_cell(cur_game,target_row+1,j)=2*(*get_cell(cur_game,target_row,j));
 				*get_cell(cur_game,target_row,j)=-1;
 				lcr=target_row+1;
 				cur_game->score+=(*get_cell(cur_game,target_row+1,j));
+				flag=1;
 				}
 			}
 			
@@ -238,14 +234,14 @@ int legal_move_check(game * cur_game)
 int i,j,moves=0; //moves contains the return value
 for(i=0;i<(cur_game->rows);i++){
 	for(j=0;j<(cur_game->cols);j++){
-		if((cur_game->cells[i*(cur_game->cols)+j])==-1){
-			moves=1;
+		if((cur_game->cells[i*(cur_game->cols)+j])==-1){//empty cell on board
+			moves=1;//then tehre's still legal moves
 			return moves;		
 		}
 	}
 }
-moves=(move_a(cur_game) || move_s(cur_game) || move_d(cur_game) || move_w(cur_game));
-	return moves;
+moves=(move_a(cur_game) || move_s(cur_game) || move_d(cur_game) || move_w(cur_game)); //if any of the moves return 1, then there's still legal moves
+	return moves; 
   
 }
 
