@@ -39,10 +39,12 @@ if(vector->size <=0)
 return 0;
 }
 else
-{return vector->array[(vector->size)-1];
+{
+vector->size--;
+return vector->array[(vector->size)-1];
 //vector->size--;
 //vector-> array=(int*) realloc(vector->array,vector->size -1);
-vector->size--;
+
 }
 }
 
