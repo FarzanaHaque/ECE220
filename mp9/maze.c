@@ -89,6 +89,10 @@ void printMaze(maze_t * maze)
 		}
 		printf("\n");
 	}
+if(-1)
+printf("-1 is true");
+else
+printf("-1 is false");
 }
 
 /*
@@ -100,8 +104,54 @@ void printMaze(maze_t * maze)
  * RETURNS:              0 if the maze is unsolvable, 1 if it is solved
  * SIDE EFFECTS:         Marks maze cells as visited or part of the solution path
  */ 
+/*
+ * solveMazeManhattanDFS -- recursively solves the maze using depth first search and a manhattan distance heuristic
+ * INPUTS:               maze -- pointer to maze structure with all necessary maze information
+ *                       col -- the column of the cell currently beinging visited within the maze
+ *                       row -- the row of the cell currently being visited within the maze
+ * OUTPUTS:              None
+ * RETURNS:              0 if the maze is unsolvable, 1 if it is solved
+ * SIDE EFFECTS:         Marks maze cells as visited or part of the solution path
+ */
+void InsertionSort(int array[], int n)
+{
+int us, s;
+int usItem;
+/* loop through us items */
+for (us = 1; us < n; us++)
+{
+usItem = array[us];
+/* loop through items until we find a spot for usItem */
+for (s = us-1; (s >= 0) && (array[s] > usItem); s--)
+array[s+1] = array[s]; /* shift s items */
+array[s+1] = usItem; /* insert us item */
+}
+}
 int solveMazeManhattanDFS(maze_t * maze, int col, int row)
 {
-    // Your code here. Make sure to replace following line with your own code.
-    return 0;
+int erow=maze->endRow;
+int ecol=maze->endColumn;
+if(col==ecol&&row==erow)
+return 1;
+if(col<0||col>=maze->width||row<0||row>=maze->height)
+return 0;
+if(maze->cells[col][row]==WALL||maze->cells[col][row]!=START)
+return 0;
+int up,left,down,right=-1;
+up=abs(row-1-erow)+abs(col-ecol);
+left=abs(row-erow)+abs(col-1-ecol);
+down=abs(row+1-erow)+abs(col-ecol);
+right=abs(row-erow)+abs(col+1-ecol);
+int man[4];
+InsertionSort(man,up);
+InsertionSort(man,left);
+InsertionSort(man,down);
+InsertionSort(man,right);
+
+return 0;
+
 }
+
+
+
+
