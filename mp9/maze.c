@@ -89,10 +89,6 @@ void printMaze(maze_t * maze)
 		}
 		printf("\n");
 	}
-if(-1)
-printf("-1 is true");
-else
-printf("-1 is false");
 }
 
 /*
@@ -135,20 +131,193 @@ if(col==ecol&&row==erow)
 return 1;
 if(col<0||col>=maze->width||row<0||row>=maze->height)
 return 0;
-if(maze->cells[col][row]==WALL||maze->cells[col][row]!=START)
+if(maze->cells[row][col]!=' ')
 return 0;
-int up,left,down,right=-1;
-up=abs(row-1-erow)+abs(col-ecol);
-left=abs(row-erow)+abs(col-1-ecol);
-down=abs(row+1-erow)+abs(col-ecol);
-right=abs(row-erow)+abs(col+1-ecol);
-int man[4];
-InsertionSort(man,up);
-InsertionSort(man,left);
-InsertionSort(man,down);
-InsertionSort(man,right);
+
+maze->cells[row][col]='.';
+int solve1,solve2,solve3,solve4=0;
+if(col>0){
+solve1=solveMazeManhattanDFS(maze,col-1,row);
+if(solve1)
+return solveMazeManhattanDFS(maze,col-1,row);}
+if(row<erow-1){
+solve2=solveMazeManhattanDFS(maze,col,row+1);
+if (solve2)
+return solveMazeManhattanDFS(maze,col,row+1);}
+if(col<ecol-1){
+solve3=solveMazeManhattanDFS(maze,col+1,row);
+if(solve3)
+return solveMazeManhattanDFS(maze,col+1,row);
+}
+if(row>0){
+solve4=solveMazeManhattanDFS(maze,col,row-1);
+if(solve4)
+return solveMazeManhattanDFS(maze,col,row-1);
+}
+
+maze->cells[row][col]=' ';
 
 return 0;
+
+
+
+/*
+int left,down,right,up=-1;
+int man[4]; //max 4 elements
+man[0]=man[1]=man[2]=man[3]=-1;
+//if new location is valid, calculate distance & insert into man stack
+if(col>0){
+left=abs(row-erow)+abs(col-1-ecol);
+InsertionSort(man,left);}
+if(row<erow-1){
+down=abs(row+1-erow)+abs(col-ecol);
+InsertionSort(man,down);}
+if(col<ecol-1){
+right=abs(row-erow)+abs(col+1-ecol);
+InsertionSort(man,right);}
+if(row>0){
+up=abs(row-1-erow)+abs(col-ecol);
+InsertionSort(man,up);}
+
+int solve1,solve2,solve3,solve4=0; //set to false
+
+if(man[0]!=-1){
+if(left!=-1 &&left==man[0]){
+maze->cells[row][col]='.';
+left=-1; //lets you know later on if this doesn't work, it's already been checked
+solve1=solveMazeManhattanDFS(maze,col-1,row);
+}
+if(down!=-1&&down==man[0]){
+maze->cells[row][col]='.';
+down=-1;
+solve1=solveMazeManhattanDFS(maze,col,row+1);
+if(solve1)
+return solveMazeManhattanDFS(maze,col,row+1);
+}
+if(right!=-1&&right==man[0]){
+maze->cells[row][col]='.';
+right=-1;
+solve1=solveMazeManhattanDFS(maze,col+1,row);
+if(solve1)
+return solveMazeManhattanDFS(maze,col+1,row);
+}
+if(up!=-1&&up==man[0]){
+maze->cells[row][col]='.';
+up=-1;
+solve1=solveMazeManhattanDFS(maze,col,row-1);
+if(solve1)
+return solveMazeManhattanDFS(maze,col,row-1);
+}
+}
+
+if(man[1]!=-1){
+if(solve1!=1){
+	if(left!=1 &&left==man[1]){
+		maze->cells[row][col]='.';
+		solve2=solveMazeManhattanDFS(maze,col-1,row);
+		left=-1;
+	if (solve2==1)
+		return solveMazeManhattanDFS(maze,col-1,row);
+	}
+	if(down!=-1&&down==man[1]){
+	maze->cells[row][col]='.';
+	solve2=solveMazeManhattanDFS(maze,col,row+1);
+	down=-1;
+	if (solve2==1)
+		return solveMazeManhattanDFS(maze,col,row+1);
+	}
+	if(right!=-1&&right==man[1]){
+	maze->cells[row][col]='.';
+	solve2=solveMazeManhattanDFS(maze,col+1,row);
+	right=-1;
+	if(solve2)
+		return solveMazeManhattanDFS(maze,col+1,row);
+	}
+	if(up!=-1&&up==man[1]){
+	maze->cells[row][col]='.';
+	solve2=solveMazeManhattanDFS(maze,col,row-1);
+	up=-1;
+		if(solve2)
+			return solveMazeManhattanDFS(maze,col,row-1);
+	}
+
+}
+}
+
+if(man[2]!=-1){
+if(solve1!=1 && solve2!=1){
+	if(left!=1 &&left==man[2]){
+		maze->cells[row][col]='.';
+		solve3=solveMazeManhattanDFS(maze,col-1,row);
+		left=-1;
+	if(solve3)
+	return solveMazeManhattanDFS(maze,col-1,row);
+	}
+	if(down!=-1&&down==man[2]){
+	maze->cells[row][col]='.';
+	solve3=solveMazeManhattanDFS(maze,col,row+1);
+	down=-1;
+	if(solve3)
+	return solveMazeManhattanDFS(maze,col,row+1);
+	}
+	if(right!=-1&&right==man[2]){
+	maze->cells[row][col]='.';
+	solve3=solveMazeManhattanDFS(maze,col+1,row);
+	right=-1;
+	if(solve3)
+	return solveMazeManhattanDFS(maze,col+1,row);
+	}
+	if(up!=-1&&up==man[2]){
+	maze->cells[row][col]='.';
+	solve3=solveMazeManhattanDFS(maze,col,row-1);
+	up=-1;
+	if(solve3)
+	return solveMazeManhattanDFS(maze,col,row-1);
+	}
+
+}
+}
+
+if(man[3]!=-1){
+if(solve1!=1 && solve2!=1 && solve3!=1){
+	if(left!=1 &&left==man[3]){
+		maze->cells[row][col]='.';
+		solve4=solveMazeManhattanDFS(maze,col-1,row);
+		left=-1;
+	if(solve4)
+	return solveMazeManhattanDFS(maze,col-1,row);
+	}
+	if(down!=-1&&down==man[3]){
+	maze->cells[row][col]='.';
+	solve4=solveMazeManhattanDFS(maze,col,row+1);
+	down=-1;
+	if(solve4)
+	return solveMazeManhattanDFS(maze,col,row+1);
+	}
+	if(right!=-1&&right==man[3]){
+	maze->cells[row][col]='.';
+	solve4=solveMazeManhattanDFS(maze,col+1,row);
+	right=-1;
+	if(solve4)
+	return solveMazeManhattanDFS(maze,col+1,row);
+	}
+	if(up!=-1&&up==man[3]){
+	maze->cells[row][col]='.';
+	solve4=solveMazeManhattanDFS(maze,col,row-1);
+	up=-1;
+	if(solve4)
+	return solveMazeManhattanDFS(maze,col,row-1);
+	}
+
+}
+}
+
+if(!(solve1 || solve2 || solve3 || solve4)){
+	maze->cells[row][col]=' ';
+	return 0;
+}
+*/
+return 0; //idt this is necessary
 
 }
 
