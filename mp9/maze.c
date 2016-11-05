@@ -14,7 +14,8 @@ maze_t * createMaze(char * fileName)
 {
     // Your code here. Make sure to replace following line with your own code.
 FILE *f;
-if((f=fopen(fileName,"r+"))== NULL){
+f=fopen(fileName,"r+");
+if(f== NULL){
 	printf("Cannot open %s\n", fileName);
 return NULL;
 }
@@ -26,9 +27,9 @@ m->width=width;
 m->height=height;
 
 int i,j=0;
-m->cells = malloc(height*sizeof(char));//allocates space for column 0
+m->cells = malloc(height*sizeof(char*));//allocates space for column 0
 for (i=0;i<height;i++){//allocates space for each subsequent column
-	m->cells[i]=malloc(width*height*sizeof(char));
+	m->cells[i]=malloc(width*sizeof(char));
 	for(j=0;j<width;j++){
 		char scanned;
 		fscanf(f,"%c",&scanned);
@@ -45,13 +46,14 @@ for (i=0;i<height;i++){//allocates space for each subsequent column
 			m->endColumn=j;
 			m->endRow=i	;
 		}	
-		//printf("%c \n",m->cells[i][j]);
+		//printf("%c\n",m->cells[i][j]);
 	}
 }
 //printf("%d,%d %d,%d",m->startRow,m->startColumn,m->endRow,m->endColumn);
 //printf("%d %d",width,height);
+fclose(f);
 
-    return NULL;
+    return m;
 }
 
 /*
@@ -65,7 +67,7 @@ void destroyMaze(maze_t * maze)
 {
     free(maze->cells);
 	free(maze);
-	return;
+	maze=NULL; //is this part necessary??
 
 }
 
@@ -80,7 +82,13 @@ void destroyMaze(maze_t * maze)
  */
 void printMaze(maze_t * maze)
 {
-    
+    int i,j=0;
+	for(i=0;i<maze->height;i++){
+		for(j=0;j<maze->width;j++){
+		printf("%c",maze->cells[i][j]);
+		}
+		printf("\n");
+	}
 }
 
 /*
