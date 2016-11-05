@@ -131,35 +131,35 @@ if(col==ecol&&row==erow)
 return 1;
 if(col<0||col>=maze->width||row<0||row>=maze->height)
 return 0;
-if(maze->cells[row][col]!=' ')
+if(maze->cells[row][col]!= EMPTY )
 return 0;
 
-maze->cells[row][col]='.';
+maze->cells[row][col]=VISITED;
 int solve1,solve2,solve3,solve4=0;
 if(col>0){
 solve1=solveMazeManhattanDFS(maze,col-1,row);
 if(solve1)
-return solveMazeManhattanDFS(maze,col-1,row);}
+return 1;//solveMazeManhattanDFS(maze,col-1,row);
+}
 if(row<erow-1){
 solve2=solveMazeManhattanDFS(maze,col,row+1);
 if (solve2)
-return solveMazeManhattanDFS(maze,col,row+1);}
+return 1;//solveMazeManhattanDFS(maze,col,row+1);
+}
 if(col<ecol-1){
 solve3=solveMazeManhattanDFS(maze,col+1,row);
 if(solve3)
-return solveMazeManhattanDFS(maze,col+1,row);
+return 1;//solveMazeManhattanDFS(maze,col+1,row);
 }
 if(row>0){
 solve4=solveMazeManhattanDFS(maze,col,row-1);
 if(solve4)
-return solveMazeManhattanDFS(maze,col,row-1);
+return 1;//solveMazeManhattanDFS(maze,col,row-1);
 }
 
-maze->cells[row][col]=' ';
+maze->cells[row][col]=EMPTY;
 
 return 0;
-
-
 
 /*
 int left,down,right,up=-1;
@@ -317,8 +317,7 @@ if(!(solve1 || solve2 || solve3 || solve4)){
 	return 0;
 }
 */
-return 0; //idt this is necessary
-
+//return 0; //idt this is necessary
 }
 
 
