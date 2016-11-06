@@ -15,6 +15,27 @@ So first you create the maze. You have to open the file, scan the first 2 intege
 allocate space for maze, and then for cells, you have in total width*height # of cells, but it's a 2d array
 so I allocated space for the 0th column of cells then i made a for loop,that went through every cell basically
 so every time you increased i, you'd allocate space for the next column
+you scan each char of the maze, if it's a newline you skip it and go to the next one, otherwise you store in that cell
+if it's S, that i,j is startcolumn,startrow of the maze, similarily if it's E the i,j is end row,endcolumn
+then we close the file and return the maze
+for destroy maze we have to free first all the cells then the maze and then set MAZE to null
+for printMaze we use 2 nested for loops for i,j printing every cell of the board & a new line before incrementing i (the row)
+
+for solveMazeManhattanDFs, first we check to see if we're at the end of the maze, in that case we return 1
+then we  check if the col row is within bounds, otherwise we return 0
+Then we check if it's not S && not Empty, if it is we return 0 because we are either revisiting or hit a wall
+if the it's not S, we set that cell[row][col] to path (.)
+Then we calculate the manhattan distances for up,down,left,right
+we calculate the manhattan distances because we don't want to move randomly, we want to move in the direction that's closes to the endpoint
+We use a sorting algorithm instead of a bunch of if's so we create an array = {leftManhat, downManhat, rightManhat, upManhat}
+we implement sorting so that it's from smallest manhattan distance to largest
+we implement another for loop to go through each element of the list, we check if the element is leftManhat,down,right,up (in that order), if it's left, it we check to make sure the cell left of the given isn't Start
+then we set our variable s to equal solveMazeManhattanDFS (maze,col-1,row) if s==1 we know we found a solution and we return 1, otherwise
+we similarily do something for down,right,up
+if none of these case return 1, we increment i and check that element in the array the same way
+if cell given isn't start we unmark the path (.) and instead put (~) for visited & then return 0
+That way if you hit that point again, you know it's already been visited & doesn't work so you skip it
+
 */
 maze_t * createMaze(char * fileName)
 {
@@ -71,9 +92,9 @@ fclose(f);
  */
 void destroyMaze(maze_t * maze)
 {
-    free(maze->cells);
+    free(maze->cells); //need to do this before free maze!
 	free(maze);
-	maze=NULL; //is this part necessary??
+	maze=NULL; 
 
 }
 
@@ -119,7 +140,7 @@ void printMaze(maze_t * maze)
 
 int solveMazeManhattanDFS(maze_t * maze, int col, int row)
 {
-    // Your code here. Make sure to replace following line with your own code.
+
     
     //both parts together
         //base cases
@@ -149,7 +170,7 @@ int solveMazeManhattanDFS(maze_t * maze, int col, int row)
     //this is insertion sort
     int arr[] = {leftManhat, downManhat, rightManhat, upManhat};
     int i;
-
+//sorting
     for(i = 1; i < 4; i++)
     {
         int temp = arr[i];
@@ -205,466 +226,6 @@ int solveMazeManhattanDFS(maze_t * maze, int col, int row)
     
     return 0;
 }
-
-
-
-
-/*
-int solveMazeManhattanDFS(maze_t * maze, int col, int row)
-{
-int erow=maze->endRow;
-int ecol=maze->endColumn;
-if(col==ecol&&row==erow)
-return 1;
-if(col<0||col>=maze->width||row<0||row>=maze->height)
-return 0;
-if(maze->cells[row][col]!= EMPTY &&  maze->cells[row][col]!=START)
-return 0;
-
-if(maze->cells[row][col]!=START)
-maze->cells[row][col]=PATH;
-
-int Manleft,Mandown,Manright,Manup=-1;
-//initializing manhattan distances
-if(col>0){
-Manleft=abs(row-erow)+abs(col-1-ecol);
-}
-if(row<erow-1){
-Mandown=abs(row+1-erow)+abs(col-ecol);
-}
-if(col<ecol-1){
-Manright=abs(row-erow)+abs(col+1-ecol);
-}
-if(row>0){
-Manup=abs(row-1-erow)+abs(col-ecol);
-}
-   if (Manleft <= Manup && Manleft <= Mandown && Manleft <= Manright) {
-      if (maze->cells[row][col-1] !=EMPTY && solveMazeManhattanDFS(maze, col-1, row)) return 1; //check left
-      //manight second smallest
-      if (Manright <= Manup && Manright <= Mandown) {
-         if (maze->cells[row][col+1] !=EMPTY  && solveMazeManhattanDFS(maze, col+1, row)) return 1;   //check right
-         //left, right, up, down
-         if (Manup <= Mandown) {
-
-
-
-
-
-
-
-
-           if (maze->cells[row-1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row-1)) return 1;
-           if ( maze->cells[row+1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row+1)) return 1;
-         }
-         //left, right, down, up
-         else {
-           if (maze->cells[row+1][col] != EMPTY && solveMazeManhattanDFS(maze, col, row+1)) return 1;
-           if (maze->cells[row-1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row-1)) return 1;
-         }
-
-
-
-
-      }
-
-
-
-
-//if(col==48&&row==1)
-    //printf("end111111\n");
-    //manup second smallest
-     if (Manup <= Mandown && Manup <= Mandown) {
-       //left, up, right, down
-        if (maze->cells[row-1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row-1)) return 1; //check up
-       if (Manright <= Mandown) {
-           if (maze->cells[row][col+1] !=EMPTY && solveMazeManhattanDFS(maze, col+1, row)) return 1;
-           if (maze->cells[row+1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row+1)) return 1;
-       }
-       else {//left, up, down, right
-           if (maze->cells[row+1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row+1)) return 1;
-           if (maze->cells[row][col+1] !=EMPTY && solveMazeManhattanDFS(maze, col+1, row)) return 1;
-       }
-     }
-     else { //mandown is second smallest
-       if (maze->cells[row+1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row+1)) return 1; //check down
-       //left, down, up, right
-       if (Manup <= Manright){
-         if (maze->cells[row-1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row-1)) return 1;
-         if (maze->cells[row][col+1] !=EMPTY && solveMazeManhattanDFS(maze, col+1, row)) return 1;
-       }
-       else {//left, down, right, up
-         if ( maze->cells[row][col+1] !=EMPTY && solveMazeManhattanDFS(maze, col+1, row)) return 1;
-         if (maze->cells[row-1][col] !=EMPTY && solveMazeManhattanDFS(maze, col, row-1)) return 1;
-       }
-     }
-   }
-
-
-//if(col==48&&row==1)printf("222222\n");
-   //if manright is smallest
-   if (Manright <= Manup && Manright <= Mandown && Manright <= Manleft) {
-     if (solveMazeManhattanDFS(maze, col+1, row)) return 1; //check right
-     if(Manleft <= Manup && Manleft <=Mandown) {
-      //if left is second smallest
-       if(solveMazeManhattanDFS(maze, col-1, row)) return 1; //check left
-       //right, left, up, down
-       if(Manup <= Mandown) {
-           if (solveMazeManhattanDFS(maze, col, row-1)) return 1;
-           if (solveMazeManhattanDFS(maze, col, row+1)) return 1;
-       }
-       else { //right, left, down, up)
-          if (solveMazeManhattanDFS(maze, col, row+1)) return 1;
-          if (solveMazeManhattanDFS(maze, col, row-1)) return 1;
-       }
-     }
-
-
-
-
-     //if up is second smallest
-    if(Manup <= Manleft && Manup <= Mandown) {
-     if (solveMazeManhattanDFS(maze, col, row-1)) return 1; //check up
-     //right, up, left, down
-     if (Manleft <= Mandown) {
-         if (solveMazeManhattanDFS(maze, col-1, row)) return 1;
-         if (solveMazeManhattanDFS(maze, col, row+1)) return 1;
-     }
-     else {//right, up, down, left
-        if (solveMazeManhattanDFS(maze, col, row+1)) return 1;
-         if (solveMazeManhattanDFS(maze, col-1, row)) return 1;
-     }
-    }
-    //if down is second smallest
-    if (Mandown <= Manleft && Mandown <= Manup) {
-      if (solveMazeManhattanDFS(maze, col, row+1)) return 1; //check down
-      //right, down, left, up
-      if (Manleft <= Manup) {
-        if (solveMazeManhattanDFS(maze, col-1, row)) return 1;
-        if (solveMazeManhattanDFS(maze, col, row-1)) return 1;
-      }
-      else { //right, down, up, left
-        if (solveMazeManhattanDFS(maze, col, row-1)) return 1;
-        if (solveMazeManhattanDFS(maze, col-1, row)) return 1;
-      }
-    }
-
-
-
-
-   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   //if manup is smallest
-   if (Manup <= Mandown && Manup <= Manleft && Manup <= Manright) {
-     if (solveMazeManhattanDFS(maze, col, row-1)) return 1; //check up
-     //if left is second smallest
-     if(Manleft <= Manright && Manleft <= Mandown){
-       if (solveMazeManhattanDFS(maze, col-1, row)) return 1;//check left
-       //up, left, down, right
-       if(Mandown <= Manright) {
-         if (solveMazeManhattanDFS(maze, col, row+1 )) return 1;
-         if (solveMazeManhattanDFS(maze, col+1, row)) return 1;
-       }
-       else {//up, left, right, down
-         if (solveMazeManhattanDFS(maze, col+1, row )) return 1;
-         if (solveMazeManhattanDFS(maze, col, row+1)) return 1;
-       }
-     }
-     //if right is second smallest
-     if (Manright <= Mandown && Manright <= Manleft){
-      if (solveMazeManhattanDFS(maze, col+1, row)) return 1; //check right
-      //up, right, left, down
-      if(Manleft <= Mandown) {
-        if (solveMazeManhattanDFS(maze, col-1, row )) return 1;
-        if (solveMazeManhattanDFS(maze, col, row+1)) return 1;
-      }
-      else { //up, right, down, left
-        if (solveMazeManhattanDFS(maze, col, row+1 )) return 1;
-        if (solveMazeManhattanDFS(maze, col-1, row)) return 1;
-      }
-
-
-
-
-     }
-     else {//else down is second smallest
-       if (solveMazeManhattanDFS(maze, col, row+1)) return 1; //check down
-       //up, down, left, right.
-       if (Manleft <= Manright){
-         if (solveMazeManhattanDFS(maze, col-1, row)) return 1;
-         if (solveMazeManhattanDFS(maze, col+1, row)) return 1;
-       }
-       else { //up, down, right, left
-         if (solveMazeManhattanDFS(maze, col+1, row)) return 1;
-         if (solveMazeManhattanDFS(maze, col-1, row)) return 1;
-       }
-
-
-
-
-     }
-   }
-
-
-
-
-  //else mandown is smallest
-   else {
-    if (solveMazeManhattanDFS(maze, col, row+1)) return 1; //check down
-    //if left is second smallest
-    if (Manleft <= Manright && Manleft <= Manup) {
-      if (solveMazeManhattanDFS(maze, col-1, row)) return 1;//check left
-      //down, left, right, up
-      if (Manright <= Manup) {
-        if(solveMazeManhattanDFS(maze, col+1, row)) return 1;
-        if(solveMazeManhattanDFS(maze, col, row-1)) return 1;
-      }
-      else { //down, left, up, right
-        if(solveMazeManhattanDFS(maze, col, row-1)) return 1;
-        if(solveMazeManhattanDFS(maze, col+1, row)) return 1;
-      }
-    }
-    //if right is second smallest
-    if (Manright <= Manup && Manright <=Manleft) {
-       if (solveMazeManhattanDFS(maze, col+1, row)) return 1; //check right
-       //down, right, left, up
-       if (Manleft <=Manup) {
-         if(solveMazeManhattanDFS(maze, col-1, row)) return 1;
-         if(solveMazeManhattanDFS(maze, col, row-1)) return 1;
-       }
-       else{//down, right, up, left
-         if(solveMazeManhattanDFS(maze, col, row-1)) return 1;
-         if(solveMazeManhattanDFS(maze, col-1, row)) return 1;
-       }
-    }
-    //else up is the second smallest
-    else {
-      if(solveMazeManhattanDFS(maze, col, row-1)) return 1;//check up
-      //down, up, left, right
-      if(Manleft <= Manright) {
-        if(solveMazeManhattanDFS(maze, col-1, row)) return 1;
-        if(solveMazeManhattanDFS(maze, col+1, row)) return 1;
-      }
-      else {//down, up, right, left
-        if(solveMazeManhattanDFS(maze, col+1, row)) return 1;
-        if(solveMazeManhattanDFS(maze, col-1, row)) return 1;
-      }
-    }
-
-
-
-
-   }
-
-
-    //if no directions produce solutions, backtrack.
-    if (maze->cells[row][col] != 83) {
-    maze->cells[row][col] = VISITED; //mark current position as visited instead of solution
-    }
-
-
-    return 0;
-}
-
-/*
-
-/*
-int solve1,solve2,solve3,solve4=0;
-if(col>0){
-solve1=solveMazeManhattanDFS(maze,col-1,row);
-if(solve1)
-return 1;//solveMazeManhattanDFS(maze,col-1,row);
-}
-if(row<erow-1){
-solve2=solveMazeManhattanDFS(maze,col,row+1);
-if (solve2)
-return 1;//solveMazeManhattanDFS(maze,col,row+1);
-}
-if(col<ecol-1){
-solve3=solveMazeManhattanDFS(maze,col+1,row);
-if(solve3)
-return 1;//solveMazeManhattanDFS(maze,col+1,row);
-}
-if(row>0){
-solve4=solveMazeManhattanDFS(maze,col,row-1);
-if(solve4)
-return 1;//solveMazeManhattanDFS(maze,col,row-1);
-}
-
-maze->cells[row][col]=EMPTY;
-
-return 0; */
-
-/*
-int left,down,right,up=-1;
-int man[4]; //max 4 elements
-man[0]=man[1]=man[2]=man[3]=-1;
-//if new location is valid, calculate distance & insert into man stack
-if(col>0){
-left=abs(row-erow)+abs(col-1-ecol);
-InsertionSort(man,left);}
-if(row<erow-1){
-down=abs(row+1-erow)+abs(col-ecol);
-InsertionSort(man,down);}
-if(col<ecol-1){
-right=abs(row-erow)+abs(col+1-ecol);
-InsertionSort(man,right);}
-if(row>0){
-up=abs(row-1-erow)+abs(col-ecol);
-InsertionSort(man,up);}
-
-int solve1,solve2,solve3,solve4=0; //set to false
-
-if(man[0]!=-1){
-if(left!=-1 &&left==man[0]){
-maze->cells[row][col]='.';
-left=-1; //lets you know later on if this doesn't work, it's already been checked
-solve1=solveMazeManhattanDFS(maze,col-1,row);
-}
-if(down!=-1&&down==man[0]){
-maze->cells[row][col]='.';
-down=-1;
-solve1=solveMazeManhattanDFS(maze,col,row+1);
-if(solve1)
-return solveMazeManhattanDFS(maze,col,row+1);
-}
-if(right!=-1&&right==man[0]){
-maze->cells[row][col]='.';
-right=-1;
-solve1=solveMazeManhattanDFS(maze,col+1,row);
-if(solve1)
-return solveMazeManhattanDFS(maze,col+1,row);
-}
-if(up!=-1&&up==man[0]){
-maze->cells[row][col]='.';
-up=-1;
-solve1=solveMazeManhattanDFS(maze,col,row-1);
-if(solve1)
-return solveMazeManhattanDFS(maze,col,row-1);
-}
-}
-
-if(man[1]!=-1){
-if(solve1!=1){
-	if(left!=1 &&left==man[1]){
-		maze->cells[row][col]='.';
-		solve2=solveMazeManhattanDFS(maze,col-1,row);
-		left=-1;
-	if (solve2==1)
-		return solveMazeManhattanDFS(maze,col-1,row);
-	}
-	if(down!=-1&&down==man[1]){
-	maze->cells[row][col]='.';
-	solve2=solveMazeManhattanDFS(maze,col,row+1);
-	down=-1;
-	if (solve2==1)
-		return solveMazeManhattanDFS(maze,col,row+1);
-	}
-	if(right!=-1&&right==man[1]){
-	maze->cells[row][col]='.';
-	solve2=solveMazeManhattanDFS(maze,col+1,row);
-	right=-1;
-	if(solve2)
-		return solveMazeManhattanDFS(maze,col+1,row);
-	}
-	if(up!=-1&&up==man[1]){
-	maze->cells[row][col]='.';
-	solve2=solveMazeManhattanDFS(maze,col,row-1);
-	up=-1;
-		if(solve2)
-			return solveMazeManhattanDFS(maze,col,row-1);
-	}
-
-}
-}
-
-if(man[2]!=-1){
-if(solve1!=1 && solve2!=1){
-	if(left!=1 &&left==man[2]){
-		maze->cells[row][col]='.';
-		solve3=solveMazeManhattanDFS(maze,col-1,row);
-		left=-1;
-	if(solve3)
-	return solveMazeManhattanDFS(maze,col-1,row);
-	}
-	if(down!=-1&&down==man[2]){
-	maze->cells[row][col]='.';
-	solve3=solveMazeManhattanDFS(maze,col,row+1);
-	down=-1;
-	if(solve3)
-	return solveMazeManhattanDFS(maze,col,row+1);
-	}
-	if(right!=-1&&right==man[2]){
-	maze->cells[row][col]='.';
-	solve3=solveMazeManhattanDFS(maze,col+1,row);
-	right=-1;
-	if(solve3)
-	return solveMazeManhattanDFS(maze,col+1,row);
-	}
-	if(up!=-1&&up==man[2]){
-	maze->cells[row][col]='.';
-	solve3=solveMazeManhattanDFS(maze,col,row-1);
-	up=-1;
-	if(solve3)
-	return solveMazeManhattanDFS(maze,col,row-1);
-	}
-
-}
-}
-
-if(man[3]!=-1){
-if(solve1!=1 && solve2!=1 && solve3!=1){
-	if(left!=1 &&left==man[3]){
-		maze->cells[row][col]='.';
-		solve4=solveMazeManhattanDFS(maze,col-1,row);
-		left=-1;
-	if(solve4)
-	return solveMazeManhattanDFS(maze,col-1,row);
-	}
-	if(down!=-1&&down==man[3]){
-	maze->cells[row][col]='.';
-	solve4=solveMazeManhattanDFS(maze,col,row+1);
-	down=-1;
-	if(solve4)
-	return solveMazeManhattanDFS(maze,col,row+1);
-	}
-	if(right!=-1&&right==man[3]){
-	maze->cells[row][col]='.';
-	solve4=solveMazeManhattanDFS(maze,col+1,row);
-	right=-1;
-	if(solve4)
-	return solveMazeManhattanDFS(maze,col+1,row);
-	}
-	if(up!=-1&&up==man[3]){
-	maze->cells[row][col]='.';
-	solve4=solveMazeManhattanDFS(maze,col,row-1);
-	up=-1;
-	if(solve4)
-	return solveMazeManhattanDFS(maze,col,row-1);
-	}
-
-}
-}
-
-if(!(solve1 || solve2 || solve3 || solve4) && maze->cells[row][col]!=START){
-	maze->cells[row][col]=VISITED;
-	//return 0;
-}*/
-
-//return 0; //idt this is necessary
-//}
 
 
 
