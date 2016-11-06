@@ -10,6 +10,12 @@
  * RETURN:       A filled maze structure that represents the contents of the input file
  * SIDE EFFECTS: None
  */
+/*
+So first you create the maze. You have to open the file, scan the first 2 integers to get width & height
+allocate space for maze, and then for cells, you have in total width*height # of cells, but it's a 2d array
+so I allocated space for the 0th column of cells then i made a for loop,that went through every cell basically
+so every time you increased i, you'd allocate space for the next column
+*/
 maze_t * createMaze(char * fileName)
 {
     // Your code here. Make sure to replace following line with your own code.
