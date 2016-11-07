@@ -34,31 +34,32 @@ void reverse(node** head){
 //so since we change what's in head, we can't head we must change the pointer for head
 //double start bc need to change head is pointing too (a double pointer)
 node* current = *head;
-node* prev= NULL;
-node* next;
-while (current != NULL){ //transverse linked list
-next=current->next;
-current=current->next=prev;
+node* prev= NULL; //locations
+node* next= current->next; //location
+while (next != NULL){ //transverse linked list
+current->next=prev;
 prev=current;
 current=next;
-//LOOOOK OVER THIS PART TO SEE WHY WORKS!!!!
-}
-
-*head=prev;
-//head=*node location, but need to change head location =**node 
+next=next->next;
 
 }
+	current->next = prev;
+	*head = current;
+}
+
 
 /*Implement this function for Lab 10*/
 void removeDuplicates(node* head){
 //head doesn't change what it's point to so only single pointer
-node* current= head
+node* current= head;
+node* delete=NULL;
 //node* temp;
-while (current!=NULL && current>next !=NULL){
+while (current!=NULL && current->next !=NULL){
 //add the AND state because other in the if it'll check current->next->data and it'll result in segfault
 	if(current->data == current->next->data){
+		delete=current->next;
 		current->next=current->next->next;
-		free(current->next); //free AFTER getting info from that node
+		free(delete); //free AFTER getting info from that node
 	}
 	else
 		current=current->next;
