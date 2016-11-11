@@ -1,0 +1,15 @@
+Record your answers here for Problem 4.
+Please limit each answer to no more than 3 sentences.
+
+
+1.Explain the difference between while loop and do-while loop. (5 points)
+
+While loop checks first before it does what's in the loop so it might not do it at all.
+Do-while does it, then checks so definitely does the loop at least one.
+
+
+
+2.Explain when you can use binary search and its advantage over linear search. (5 points)
+
+You can only use binary search for an ordered list. It looks at the middle first and then checks whether the # is = middle, if it's less it in the 1st half, if it's greater than the middle it's in the 2nd half of the list so you can immediately skip checking 1/2 of the list. Then it keeps on doing this so instead of you checking every item until you reach it (linear search) this method is a lot faster.
+
