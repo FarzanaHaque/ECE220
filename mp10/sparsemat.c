@@ -18,7 +18,7 @@ sp_tuples * load_tuples(char* input_file){
 
     
     FILE *f;
-f=fopen(input_file,"r+");
+f=fopen(input_file,"r");
 if(f== NULL){
     printf("Cannot open %s\n", input_file);
 return NULL;
@@ -52,16 +52,6 @@ st->nz=nonzeros;
 fclose(f);
 return st;         
 }
-
-
-
-
-
-
-
-
-
-
 
 
 void printList(sp_tuples_node * Node) {
@@ -121,7 +111,7 @@ if(mat_t->tuples_head==NULL){
 else if(row<mat_t->tuples_head->row||(row==mat_t->tuples_head->row&&col<mat_t->tuples_head->col))
 {
     new->next=mat_t->tuples_head;
-    mat_t->tuples_head=new->next;
+    mat_t->tuples_head=new;
 }
 
 
