@@ -87,6 +87,30 @@ RationalNumber RationalNumber::operator - (const RationalNumber& arg)
     result.denominator=gcd(result.numerator,result.denominator)*result.denominator;    
         return result;
 }
+PolarNumber RationalNumber::operator + (const PolarNumber& arg){
+    double x, y, add;
+    x = arg.get_magComponent() * cos (arg.get_phaseComponent());
+    y = arg.get_magComponent() * sin (arg.get_phaseComponent());
+    //add real components together
+    add = x + decimal_value();
+    //resolve back to polar
+    double new_phaseComponent = tan(y/add);
+    double new_magComponent = sqrt(add*add + y*y);
+    return PolarNumber (new_magComponent, new_phaseComponent);
+}
+
+
+PolarNumber RationalNumber::operator - (const PolarNumber& arg){
+    double x, y, sub;
+    x = arg.get_magComponent() * cos (arg.get_phaseComponent());
+    y = arg.get_magComponent() * sin (arg.get_phaseComponent());
+    //add real components together
+    sub = x - decimal_value();
+    //resolve back to polar
+    double new_phaseComponent = tan(y/sub);
+    double new_magComponent = sqrt(sub*sub + y*y);
+    return PolarNumber (new_magComponent, new_phaseComponent);
+}
 RealNumber RationalNumber::operator - (const RealNumber& arg)
 {
     RealNumber result;

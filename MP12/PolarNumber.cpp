@@ -63,6 +63,57 @@ result.phaseComponent=phaseComponent+atan2(arg.magComponent*sin(arg.phaseCompone
     return result;
 }
 
+PolarNumber PolarNumber::operator + (const RealNumber& arg) {
+    double x, y, add;
+    x = magComponent * cos (phaseComponent);
+    y = magComponent * sin (phaseComponent);
+    //add real components together
+    add = x + arg.get_value();
+    //resolve back to polar
+    double new_phaseComponent = tan(y/add);
+    double new_magComponent = sqrt(add*add + y*y);
+    return PolarNumber (new_phaseComponent, new_magComponent);
+}
+
+
+
+PolarNumber PolarNumber::operator + (const RationalNumber& arg) {
+    double x, y, add;
+    x = magComponent * cos (phaseComponent);
+    y = magComponent * sin (phaseComponent);
+    //add real components together
+    add = x + arg.decimal_value();
+    //resolve back to polar
+    double new_phaseComponent = tan(y/add);
+    double new_magComponent = sqrt(add*add + y*y);
+    return PolarNumber (new_phaseComponent, new_magComponent);
+}
+
+
+PolarNumber PolarNumber::operator - (const RationalNumber& arg){
+    double x, y, sub;
+    x = magComponent * cos (phaseComponent);
+    y = magComponent * sin (phaseComponent);
+    //add real components together
+    sub = x - arg.decimal_value();
+    //resolve back to polar
+    double new_phaseComponent = tan(y/sub);
+    double new_magComponent = sqrt(sub*sub + y*y);
+    return PolarNumber (new_phaseComponent, new_magComponent);
+}
+
+
+PolarNumber PolarNumber::operator - (const RealNumber& arg){
+    double x, y, sub;
+    x = magComponent * cos (phaseComponent);
+    y = magComponent * sin (phaseComponent);
+    //add real components together
+    sub = x - arg.get_value();
+    //resolve back to polar
+    double new_phaseComponent = tan(y/sub);
+    double new_magComponent = sqrt(sub*sub + y*y);
+    return PolarNumber (new_phaseComponent, new_magComponent);
+}
 
 //Operator for -
 PolarNumber PolarNumber::operator - (const PolarNumber& arg)

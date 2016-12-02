@@ -45,6 +45,30 @@ RealNumber RealNumber::operator + (const RationalNumber& arg)
     return result;
 }
 
+PolarNumber RealNumber::operator + (const PolarNumber& arg){
+    double x, y, add;
+    x = arg.get_magComponent() * cos (arg.get_phaseComponent());
+    y = arg.get_magComponent() * sin (arg.get_phaseComponent());
+    //add real components together
+    add = x + get_value();
+    //resolve back to polar
+    double new_phaseComponent = tan(y/add);
+    double new_magComponent = sqrt(add*add + y*y);
+    return PolarNumber (new_magComponent, new_phaseComponent);
+}
+
+
+PolarNumber RealNumber::operator - (const PolarNumber& arg){
+    double x, y, sub;
+    x = arg.get_magComponent() * cos (arg.get_phaseComponent());
+    y = arg.get_magComponent() * sin (arg.get_phaseComponent());
+    //add real components together
+    sub = x - get_value();
+    //resolve back to polar
+    double new_phaseComponent = tan(y/sub);
+    double new_magComponent = sqrt(sub*sub + y*y);
+    return PolarNumber (new_magComponent, new_phaseComponent);
+}
 
 //Operator for -
 RealNumber RealNumber::operator - (const RealNumber& arg)
