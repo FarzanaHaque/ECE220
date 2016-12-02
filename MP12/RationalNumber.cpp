@@ -30,74 +30,112 @@ numerator=numer;
 void RationalNumber::set_denominator(int denom){
 denominator=denom;
 }
-//get numer 
+//get numer
 int RationalNumber::get_numerator() const{
-	return numerator;
+    return numerator;
 }
 int RationalNumber::get_denominator() const{
-	return denominator;
+    return denominator;
 }
 void RationalNumber::set_value(int numer,int denom){
 numerator=numer;
 denominator=denom;
 }
 int RationalNumber::gcd(int a,int b){
-  if ( a==0 ) 
-	return b;
+  if ( a==0 )
+    return b;
   return gcd ( b%a, a );
+
 
 }
 
+
 double RationalNumber::magnitude(){
 if((numerator/denominator)<0)
-	return(-1*(numerator/denominator));
+    return(-1*(numerator/denominator));
 else
-	return (numerator/denominator);
+    return (numerator/denominator);
 }
 double RationalNumber::decimal_value() const{
 return numerator/denominator;
 }
 
-//Operator for + 
+
+//Operator for +
 RationalNumber RationalNumber::operator + (const RationalNumber& arg)
 {
-    	RationalNumber result;
-    	result.numerator=numerator*arg.denominator+denominator*arg.numerator;
-	result.denominator=denominator*arg.denominator;
-	result.numerator=gcd(result.numerator,result.denominator)*result.numerator;
-	result.denominator=gcd(result.numerator,result.denominator)*result.denominator;	
-    	return result;
+        RationalNumber result;
+        result.numerator=numerator*arg.denominator+denominator*arg.numerator;
+    result.denominator=denominator*arg.denominator;
+    result.numerator=gcd(result.numerator,result.denominator)*result.numerator;
+    result.denominator=gcd(result.numerator,result.denominator)*result.denominator;    
+        return result;
 }
-
+RealNumber RationalNumber::operator + (const RealNumber& arg)
+{
+    RealNumber result;
+    result.set_value(decimal_value()+arg.get_value());
+    return result;
+}
 //Operator for -
 RationalNumber RationalNumber::operator - (const RationalNumber& arg)
 {
-    	RationalNumber result;
-    	result.numerator=numerator*arg.denominator-denominator*arg.numerator;
-	result.denominator=denominator*arg.denominator;
-	result.numerator=gcd(result.numerator,result.denominator)*result.numerator;
-	result.denominator=gcd(result.numerator,result.denominator)*result.denominator;	
-    	return result;
+        RationalNumber result;
+        result.numerator=numerator*arg.denominator-denominator*arg.numerator;
+    result.denominator=denominator*arg.denominator;
+    result.numerator=gcd(result.numerator,result.denominator)*result.numerator;
+    result.denominator=gcd(result.numerator,result.denominator)*result.denominator;    
+        return result;
 }
-
-//Operator for * 
+RealNumber RationalNumber::operator - (const RealNumber& arg)
+{
+    RealNumber result;
+    result.set_value(decimal_value()-arg.get_value());
+    return result;
+}
+//Operator for *
 RationalNumber RationalNumber::operator * (const RationalNumber& arg)
 {
     RationalNumber result;
     result.numerator=numerator*arg.numerator;
     result.denominator=denominator*arg.denominator;
-	result.numerator=gcd(result.numerator,result.denominator)*result.numerator;
-	result.denominator=gcd(result.numerator,result.denominator)*result.denominator;	
+    result.numerator=gcd(result.numerator,result.denominator)*result.numerator;
+    result.denominator=gcd(result.numerator,result.denominator)*result.denominator;    
     return result;
 }
-
-//Operator for / 
+RealNumber RationalNumber::operator * (const RealNumber& arg)
+{
+    RealNumber result;
+    result.set_value(decimal_value()*arg.get_value());
+    return result;
+}
+PolarNumber RationalNumber::operator * (const PolarNumber& arg)
+{
+    PolarNumber result;
+    result.set_magComponent(decimal_value()*arg.get_magComponent());
+	result.set_phaseComponent(arg.get_phaseComponent());
+    return result;
+}
+//Operator for /
 RationalNumber RationalNumber::operator / (const RationalNumber& arg)
 {
     RationalNumber result;
 result.numerator=numerator*arg.denominator;
 result.denominator=denominator*arg.numerator;
-	result.numerator=gcd(result.numerator,result.denominator)*result.numerator;
-	result.denominator=gcd(result.numerator,result.denominator)*result.denominator;	
+    result.numerator=gcd(result.numerator,result.denominator)*result.numerator;
+    result.denominator=gcd(result.numerator,result.denominator)*result.denominator;    
     return result;
-} 
+}
+RealNumber RationalNumber::operator / (const RealNumber& arg)
+{
+    RealNumber result;
+    result.set_value(decimal_value()/arg.get_value());
+    return result;
+}
+PolarNumber RationalNumber::operator / (const PolarNumber& arg)
+{
+    PolarNumber result;
+    result.set_magComponent(decimal_value()/arg.get_magComponent());
+	result.set_phaseComponent(arg.get_phaseComponent());
+    return result;
+}

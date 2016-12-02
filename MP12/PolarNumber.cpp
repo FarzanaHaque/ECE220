@@ -20,6 +20,7 @@ phaseComponent=phase;
 }
 //copy constructor
 
+
 PolarNumber::PolarNumber(const PolarNumber& other){
 NumberType=POLAR;
 magComponent=other.magComponent;
@@ -45,38 +46,59 @@ void PolarNumber::set_value(double mval,double phval){
 magComponent=mval;
 phaseComponent=phval;
 }
-/*
-//Operator for + 
+
+
+//Operator for +
 PolarNumber PolarNumber::operator + (const PolarNumber& arg)
 {
     PolarNumber result;
+/*
     result.magComponent=magComponent+arg.magComponent;
     result.phaseComponent=phaseComponent+arg.phaseComponent;
-	result.phaseComponent=result.phaseComponet%(2*M_PI);
+    result.phaseComponent=result.phaseComponet%(2*M_PI);
+*/
+//found this math formular for stackexchange
+result.magComponent=sqrt((magComponent*magComponent)+(arg.magComponent*arg.magComponent)+2*magComponent*arg.magComponent*cos(arg.phaseComponent-phaseComponent));
+result.phaseComponent=phaseComponent+atan2(arg.magComponent*sin(arg.phaseComponent-arg.phaseComponent),magComponent*cos(arg.phaseComponent-phaseComponent));
     return result;
 }
+
 
 //Operator for -
 PolarNumber PolarNumber::operator - (const PolarNumber& arg)
-{
-    PolarNumber result;
-    result.value=value-arg.value;
+{    PolarNumber result;
+result.magComponent=sqrt((magComponent*magComponent)+(arg.magComponent*arg.magComponent)+2*magComponent*arg.magComponent*cos(arg.phaseComponent+180-phaseComponent));
+result.phaseComponent=phaseComponent+atan2(arg.magComponent*sin(arg.phaseComponent+180-arg.phaseComponent),magComponent*cos(arg.phaseComponent+180-phaseComponent));
     return result;
 }
 
-//Operator for * 
+
+//Operator for *
 PolarNumber PolarNumber::operator * (const PolarNumber& arg)
 {
     PolarNumber result;
-result.value=value*arg.value;
+result.magComponent=magComponent*arg.magComponent;
+result.phaseComponent=phaseComponent+arg.phaseComponent;
     return result;
 }
+PolarNumber PolarNumber::operator * (const RealNumber& arg){
+PolarNumber result;
+result.phaseComponent=phaseComponent;
+result.magComponent=magComponent*arg.get_value();
+return result;
+}
 
-//Operator for / 
+//Operator for /
 PolarNumber PolarNumber::operator / (const PolarNumber& arg)
 {
     PolarNumber result;
-result.value=value/arg.value;
+result.magComponent=magComponent/arg.magComponent;
+result.phaseComponent=phaseComponent-arg.phaseComponent;
     return result;
 }
-*/
+PolarNumber PolarNumber::operator / (const RealNumber& arg){
+PolarNumber result;
+result.phaseComponent=phaseComponent;
+result.magComponent=magComponent/arg.get_value();
+return result;
+}
