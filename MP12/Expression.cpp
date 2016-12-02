@@ -84,7 +84,7 @@ std::string::iterator Expression::read_polar(string expression_string, std::stri
 	value_container2 >> value2;
 	if(Number_count == 0){
 		polar1 = PolarNumber(value1,M_PI*value2/(180.0));
-		left_Number = &rational1;
+		left_Number = &polar1;
 	}
 	else if(Number_count == 1){
 		polar2 = PolarNumber(value1,M_PI*value2/(180.0));
