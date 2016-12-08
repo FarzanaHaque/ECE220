@@ -1,0 +1,38 @@
+Compilation Results:
+********************
+sparsemat.c: In function ‘set_tuples’:
+sparsemat.c:144:6: error: ‘previous’ undeclared (first use in this function)
+ free(previous);
+      ^
+sparsemat.c:144:6: note: each undeclared identifier is reported only once for each function it appears in
+sparsemat.c:145:6: error: ‘temp’ undeclared (first use in this function)
+ free(temp); //bbecause we ussed up memory
+      ^
+make: *** [sparsemat.o] Error 1
+
+load_tuples test: 10 pts total
+
+gv_tuples test: 5 pts total
+
+set_tuples test: 35 pts total
+
+add_tuples test: 10 pts total
+
+mult_tuples test: 15 pts total
+
+save_tuples test: 10 pts total
+
+Printing diff of save tuples. If empty, 10 pts
+
+0
+destroy_tuples test: 5 pts total
+Printing valgrind output. If no memory leaks/errors, 5 pts
+valgrind: ./test0: No such file or directory
+
+Grade:
+******
+Late submission: 18
+Functionality: 0
+Comments and Style:  5  
+ Intro paragraph:  5  
+Total: 0
