@@ -1,0 +1,12 @@
+Compilation Results:
+********************
+
+Printing diff. Empty = Full points. Each line is worth 6 points
+
+Grade:
+******
+Late submission: 10
+Functionality: 0
+Comments and Style: 5
+Intro paragraph: 5
+Total: 100
